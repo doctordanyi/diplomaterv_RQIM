@@ -110,7 +110,24 @@ From the applications point of view, there are quads with continuous\footnote{Th
 \subsection{Quad representation}
 %-----------------------------------------------------------------------------------------------
 
+There are several ways to represent quads, each with different advantageous properties.
+For this work multiple considerations were made in that regard.
+The most straightforward is to simply store the above mentioned parameters.
+This is simple and easy for human reading, which is great help in the development process.
 
+A step forward from this is to norm the $a,b$ and $c$ parameter of the quad with the base segment's length. 
+This gives a scale or size parameter for the quad, which is useful for marker generation.
+These two representations are good for development and marker generation, but not so much for calculations.
+
+A third option is to store the endpoints of the line segments.
+It requires the storage of 4 points: two endpoints and two inner points.
+That method is redundant for storage: it uses 8 parameters instead of 6.
+However this poses no practical problem in the scope of the project.
+The one outstanding benefit of this method is it's efficiency in calculations.
+Because it is based on points in a linear space, linear algebraic methods (matrix multiplications) can be used for calculating he perspective (?projective?) transformations.
+
+In this project the second and the third options are used.
+A quad can be initialised by it's size (the length of the base segment), the 
 
 %-----------------------------------------------------------------------------------------------
 \section{RQIM}
