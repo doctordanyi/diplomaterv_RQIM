@@ -30,7 +30,28 @@ The whole marker is built from quads with different sides and angles.
 \section{Quad}
 %-----------------------------------------------------------------------------------------------
 
+A marker is put together from quads.
+Figure \figref{exampleQuads} shows two examples.
+One side of the quads is left out: they are put together from three joint line segments.
+The middle segment, with two adjoining lines, will be referred to as the 'base' of the quad.
+The outer segments are going to be called 'arms'.
 
+A quad has 6 degrees of freedom.
+There are 3 independent distance parameters: the length of the base and the two arm segments.
+There are also 3 unrelated angle parameters: the angles between each arm and the base, and the orientation of the quad.
+
+\begin{figure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.75\textwidth]{figures/quad1.png}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.75\textwidth]{figures/quad2.png}
+	\end{subfigure}
+	\caption{Example for different quads}
+	\label{fig:exampleQuads}
+\end{figure}
 
 %-----------------------------------------------------------------------------------------------
 \section{RQIM}
