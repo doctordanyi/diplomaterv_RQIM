@@ -60,6 +60,58 @@ There are also 3 unrelated angle parameters: the angles between each arm and the
 	\label{fig:quadParams}
 \end{figure}
 
+Figure \figref{quadParams} shows the free parameters of a quad (the orientation is not shown on the image).
+The following notation is used:
+\begin{itemize}
+	\item[a]: The length of one arm
+	\item[b]: The length of the base
+	\item[c]: The length of the other arm
+	\item[$\alpha$]: The angle between one arm and the base
+	\item[$\beta$]: The angle between the other arm and the base
+	\item[$\gamma$]: The angle with which the whole quad is rotated
+\end{itemize}
+For the sake of simplicity, figure \figref{quadParams} does not show the rotation with $\gamma$.
+The quad would be rotated around the origin of it's coordinate system.
+
+The value of the length parameters are given in pixels, although they can be expressed in any unit of distance.
+The angles can be given is degrees of radians (in the implementation degrees are used for easier human readability).
+
+\begin{equation}
+	a\in(0 , a_{max}]
+	\label{eq:aRange}
+\end{equation}
+\begin{equation}
+	b\in(0 , b_{max}]
+	\label{eq:bRange}
+\end{equation}
+\begin{equation}
+	c\in(0 , c_{max}]
+	\label{eq:cRange}
+\end{equation}
+\begin{equation}
+	\alpha\in(0 , 180^\circ)
+	\label{eq:alphaRange}
+\end{equation}
+\begin{equation}
+	\beta\in(0 , 180^\circ)
+	\label{eq:betaRange}
+\end{equation}
+\begin{equation}
+	\gamma\in[0 , 360^\circ)
+	\label{eq:gammaRange}
+\end{equation}
+
+Equations \eqref{aRange} through \eqref{gammaRange} specify the range of each parameter.
+The maximum of the distance parameters are set by the space left on the image for the given marker, there is no theoretical limit for them.
+There is also no constraint for the resolution of the parameters.
+From the applications point of view, there are quads with continuous\footnote{That is, only limited by the computational resolution} and discrete parameter spaces.
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Quad representation}
+%-----------------------------------------------------------------------------------------------
+
+
+
 %-----------------------------------------------------------------------------------------------
 \section{RQIM}
 %-----------------------------------------------------------------------------------------------
