@@ -247,6 +247,35 @@ end
 return marker
 \end{lstlisting}
 
+This method is not optimal and is based on trial and error, but it gives usable markers for the development process.
+
 %-----------------------------------------------------------------------------------------------
 \subsection{Discrete RQIM}
 %-----------------------------------------------------------------------------------------------
+
+There are experiments in progress with discrete parameter space quads.
+It may be advantageous to quantize the parameter space in order to decrease the error probability in the pose estimation process.
+
+Quads with finite possible states can be stored using much less resources than their continuous counterpart.
+As an example let us take a look at the following quantisation.
+\begin{description}
+	\item[Angles:] $15^\circ,30^\circ,45^\circ,60^\circ,75^\circ,90^\circ,105^\circ,120^\circ$
+	\item[Multipliers:] $0.40, 0.60, 0.80, 1.0, 1.25, 1.50, 1.75, 2.0$
+	\item[Orientations:] $0^\circ, 22.5^\circ, 45^\circ, 67.5^\circ \dots 270^\circ, 292.5^\circ, 315^\circ, 337.5^\circ$
+	\item[Sizes:] $1, 0.8, 0.6, 0.5, 0.4, 0.3, 0.25, 0.2, 0.1, 0.08, 0.06, 0.05, 0.04, 0.03, 0.025, 0.02$
+\end{description}
+In this example, there are 8 possible values for the angle parameters, also 8 for the multipliers, 16 for the orientation and also 16 for the sizes.
+If the possibilities are stored in a lookup table, it is enough for the quad to store the index at which the value is accessible.
+A quad is defined by two angle parameters, two multipliers, an orientation and a size.
+The angles (in this case) require at least 3 bits each, the multipliers also.
+The orientation and the size need 4 bits each.
+That gives a sum of 20 bits per quad, which is significantly less than the space required to store 6 floating point numbers per quad.
+
+This 20 bit word is also usable as an ID for the quad.
+It may be possible to code information in these ID-s, so the marker could provide additional information.
+This information could be related to and used by the localisation process, or be totally unrelated, general data.
+These possibilities have not yet been extensively researched.
+
+The discrete RQIMs are usually less dense than the continuous ones, due to the limited angle possibilities.
+This means fewer quads per marker, which leads to decreasing redundancy.
+An optimum must be found between the number of quads per RQIM and distance between quads in the parameter space.
