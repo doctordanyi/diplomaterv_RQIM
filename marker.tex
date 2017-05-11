@@ -164,5 +164,41 @@ The second method, using the size, multiplier and angle parameters is used in ma
 The third is used during the calculations and the recognition process.
 
 %-----------------------------------------------------------------------------------------------
-\section{RQIM}
+\section{Marker}
+%-----------------------------------------------------------------------------------------------
+
+Quads are 6 DOF shapes: in theory it would be enough to use only one of them for localisation and pose estimation.
+However that method would have very low error tolerance and questionable accuracy even in a best case scenario.
+To comply with the specifications written in the beginning of this chapter, the markers are put together from multiple quads.
+By placing quads with different orientations and sizes the error tolerance and accuracy can be greatly improved.
+
+An intrinsic positive quality of using multiple quads with varying sizes is the scale invariance.
+As mentioned, even a single quad is sufficient for the task at hand.
+If the smaller quads become unrecognisable because of the low resolution or too large distance, a successful measurement is still possible.
+The same is true on the other end of the spectrum: if the observer is too close to the marker and the larger ones leave the field of view, the position and orientation can be calculated from the smaller quads.
+
+Figure \figref{rqimExample} shows an example for a marker.
+It is generated with naive algorithm described in the next section, and is not optimal in many ways.
+Nonetheless it is functional, even if only a fraction of the quads are registered for the measurement.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{figures/RQIM_1.png}
+	\caption{An example for a marker}
+	\label{fig:rqimExample}
+\end{figure}
+
+The markers are going to be referred to as RQIM, which means Random Quad Image Marker.
+As the name suggests, the quads are randomly generated and placed on the markers.
+
+Unless otherwise specified, RQIMs use quads with continuous parameter spaces.
+In this chapter there will also be a small introduction to the discrete parameter markers and their potential applications.
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Marker generation}
+%-----------------------------------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Discrete RQIM}
 %-----------------------------------------------------------------------------------------------
