@@ -115,19 +115,53 @@ For this work multiple considerations were made in that regard.
 The most straightforward is to simply store the above mentioned parameters.
 This is simple and easy for human reading, which is great help in the development process.
 
-A step forward from this is to norm the $a,b$ and $c$ parameter of the quad with the base segment's length. 
+A step forward from this is to norm the $a,b$ and $c$ parameter of the quad with the base segment's length.
+Then the following parameters are used:
+\begin{itemize}
+	\item[s]: marker size, the same as the base length
+	\item[$m_a$]: 'a' multiplier. $m_a = a/b$
+	\item[$m_c$]: 'c' multiplier. $m_c = c/b$
+\end{itemize}
+The $\alpha,\beta,\gamma$ angle parameters are not changed.
 This gives a scale or size parameter for the quad, which is useful for marker generation.
 These two representations are good for development and marker generation, but not so much for calculations.
 
 A third option is to store the endpoints of the line segments.
-It requires the storage of 4 points: two endpoints and two inner points.
+It requires the storage of 4 points: two endpoints ($E_1,E_2$) and two inner points ($I_1,I_2$).
+Equations \eqref{innerPoint1Def} through \eqref{endPoint2Def} define the points' coordinates before rotating with $\gamma$.
+\begin{equation}
+	\label{eq:innerPoint1Def}
+	I_1' = (-\frac{b}{2}, 0)
+\end{equation}
+\begin{equation}
+	\label{eq:innerPoint2Def}
+	I_2' = (\frac{b}{2}, 0)
+\end{equation}
+\begin{equation}
+	\label{eq:endPoint1Def}
+	E_1' = (-\frac{b}{2} + b*cos(\alpha),a*sin(\alpha))
+\end{equation}
+\begin{equation}
+	\label{eq:endPoint2Def}
+	E_2' = (\frac{b}{2} - c*cos(\beta),c*sin(\beta))
+\end{equation}
+\begin{equation}
+	\label{eq:rotMatrix}
+	Rot(\gamma) = \left( \begin{array}{cc}
+	cos(\gamma) & -sin(\gamma)  \\
+	sin(\gamma) & cos(\gamma)  \end{array} \right)
+\end{equation}
+The point $E_1,E_2,I_1,I_2$ can be obtained from $E_1',E_2',I_1',I_2'$ by a multiplication with the rotational matrix $Rot(\gamma)$.
+
 That method is redundant for storage: it uses 8 parameters instead of 6.
 However this poses no practical problem in the scope of the project.
 The one outstanding benefit of this method is it's efficiency in calculations.
-Because it is based on points in a linear space, linear algebraic methods (matrix multiplications) can be used for calculating he perspective (?projective?) transformations.
+Because it is based on points in a linear space, linear algebraic methods (matrix multiplications) can be used for calculating he projective transformations.
 
 In this project the second and the third options are used.
-A quad can be initialised by it's size (the length of the base segment), the 
+The first, naive method is omitted because it has no considerable advantage over the other two.
+The second method, using the size, multiplier and angle parameters is used in marker generation.
+The third is used during the calculations and the recognition process.
 
 %-----------------------------------------------------------------------------------------------
 \section{RQIM}
