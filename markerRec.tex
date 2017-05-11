@@ -4,3 +4,89 @@
 
 In this chapter there will be a summary of the image processing algorithms tried and used for the recognition of the fiducial markers.
 From a computer vision point of view the task is to detect joint line segments.
+This is a relatively easy task in image processing, there are many well tried algorithms for it.
+
+In this chapter will be a short summary of the algorithms used for testing and performance comparison.
+The preprocessing steps used for preparing the images for the line fitters (segmentation, thresholding, filtering etc.) will also be discussed.
+
+The general flow of processing is the same for every line fitting solution.
+The input is the raw image taken\footnote{In the development phase there were rendered pictures used for better repeatability} by the observer.
+The first problem is finding the RQIM on the picture.
+When the marker area is located, it is necessary to discard the only partially visible and/or unrecognisable quads.
+At this point there is an image or set of images containing potentially good quads.
+The process here diverges depending on which line fitting algorithm is used.
+They all need differently conditioned input images for optimal performance.
+The line fitter routines not necessarily have the same output format\footnote{Some return line segments defined by their endpoint, others use the polar representation of a lin, etc.}, so conversion may be needed.
+This is the end of the marker recognition phase.
+This step of the process takes the raw input image and initiates quad structures based on the observed picture.
+
+Four separate line fitters are profiled in this experiment.
+\begin{itemize}
+	\item Hough-transformation
+	\item Corner detection
+	\item Skeletoning detector
+	\item Gradient detector (enhanced Hough transformation)
+\end{itemize}
+The first one uses the classic Hough-transformation for line detection.
+In the OpenCV framework there is another, probabilistic implementation of the transformation.
+It will also be tested.
+
+The second detector is based on corner recognition.
+There are more variants to try out for this method too.
+The corner metrics of a feature can be calculated differently with (Harris metric, eigenvalues, etc.) varying results.
+It is also needed for the solution to be scale invariant, which also can be achieved in a number of ways.
+
+The third alternative uses skeletoning for line detection.
+It is a RANSAC-like method, which makes it very robust, though quite computationally expensive.
+The core concept is to thin the observed marker (band) down to single pixel lines and try to find two point with the most inliers.
+
+The gradient detector is a bit Hough-like in it's nature.
+It uses the image gradient the calculate the angle in the Hough-space, and the pixels only vote in their distance parameter.
+
+%-----------------------------------------------------------------------------------------------
+\section{Preprocessing}
+%-----------------------------------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Segmentation}
+%-----------------------------------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Filtering}
+%-----------------------------------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------------------------------
+\section{Line fitters}
+%-----------------------------------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Hough transformation}
+%-----------------------------------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Gradient detector}
+%-----------------------------------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Corner detector}
+%-----------------------------------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Skeletoning detector}
+%-----------------------------------------------------------------------------------------------
+
+
