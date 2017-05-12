@@ -110,11 +110,28 @@ The contours with ratios outside these limits are discarded.
 
 The segmentation processes output is available as a singe image with colour-coded\footnote{Gray level, to be exact} blobs or as a list of separate images each containing a quad candidate.
 Figure \figref{segmentationOutput} shows an example for the output of the segmentation process.
+
 %-----------------------------------------------------------------------------------------------
 \subsection{Conditioning}
 %-----------------------------------------------------------------------------------------------
 
+Before running the line detection algorithms some conditioning steps are done in order to improve their effectiveness.
+These processes are not uniform - every fitting method needs it's own.
 
+The Hough transformation traditionally works best on thin lines.
+The easiest way is to generate an edge image with high-pass filtering.
+The OpenCV framework offers a wide variety of features for this task.
+The best result are obtained by using the Canny edge detector.
+
+The skeletoning detector does not need a conditioning step, as it performs the band thinning on it's own.
+
+The methods based on image gradients and corner detection both require some level of smoothing on the picture.
+In case of the corner detection the smoothing is useful for removing the false positive matches caused by the jagged edges, or in case os JPEG images the artefacts caused by the compression.
+The gradient detector simply gives a more spread-out and easier to analyse result on a smoothly changing gradient than it would on strict edge.
+The smoothing is also implemented using the OpenCV framework, which provides easy access to Gaussian filtering.
+The OpenCV implementation is based on convolution with a configurable Gaussian kernel.
+The kernel size and the deviation in $x$ and $y$ direction can be set.
+The Gaussian kernel and the convolution itself is handled in th framework.
 
 %-----------------------------------------------------------------------------------------------
 \section{Line fitters}
