@@ -3,11 +3,10 @@
 %-----------------------------------------------------------------------------------------------
 
 One of the goals of this project was to design a fiducial marker with advantageous properties for use in pose estimation.
-In a typical scenario the marker may be seen from largely varying viewpoints.
-Therefore it has to have some level of scale invariability.
+In a typical scenario the marker may be seen from largely varying viewpoints, therefore it has to have some level of scale invariability.
 If the observer is far from the marker, the smaller details may be lost due to the limited resolution of the camera.
 If the same observer moves closer to the marker, it may fill the whole field of view and some features may even slip off the image.
-This leads to another feature the marker needs: redundancy.
+This leads to another feature the marker needs to have: redundancy.
 If the observer gets too close to the marker or some obstacle partially blocks the view, the localisation still needs to provide usable results.
 
 The intended use of the markers is spatial localisation and pose estimation.
@@ -24,7 +23,7 @@ To sum up the above discussed specifications, a suitable marker would have to:
 
 In the following sections will be a recommendation for a marker conforming for the listed specifications.
 It is based on 3 connected line segments forming a quad with one missing side.
-The whole marker is built from quads with different sides and angles.
+The whole marker is built from quads with different side lengths and angles.
 
 %-----------------------------------------------------------------------------------------------
 \section{Quad}
@@ -73,8 +72,8 @@ The following notation is used:
 For the sake of simplicity, figure \figref{quadParams} does not show the rotation with $\gamma$.
 The quad would be rotated around the origin of it's coordinate system.
 
-The value of the length parameters are given in pixels, although they can be expressed in any unit of distance.
-The angles can be given is degrees of radians (in the implementation degrees are used for easier human readability).
+The values of the length parameters are given in pixels, although they can be expressed in any unit of distance.
+The angles can be given is degrees or radians (in the implementation degrees are used for easier human readability).
 
 \begin{equation}
 	a\in(0 , a_{max}]
@@ -104,7 +103,7 @@ The angles can be given is degrees of radians (in the implementation degrees are
 Equations \eqref{aRange} through \eqref{gammaRange} specify the range of each parameter.
 The maximum of the distance parameters are set by the space left on the image for the given marker, there is no theoretical limit for them.
 There is also no constraint for the resolution of the parameters.
-From the applications point of view, there are quads with continuous\footnote{That is, only limited by the computational resolution} and discrete parameter spaces.
+From the applications point of view, there are quads with continuous\footnote{That is, only limited by the computational precision} and discrete parameter spaces.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{Quad representation}
@@ -128,7 +127,7 @@ These two representations are good for development and marker generation, but no
 
 A third option is to store the endpoints of the line segments.
 It requires the storage of 4 points: two endpoints ($E_1,E_2$) and two inner points ($I_1,I_2$).
-Equations \eqref{innerPoint1Def} through \eqref{endPoint2Def} define the points' coordinates before rotating with $\gamma$.
+Equations \eqref{innerPoint1Def} through \eqref{endPoint2Def} define the points' coordinates before rotating with $\gamma$, using figure \figref{quadParams}'s notation.
 \begin{equation}
 	\label{eq:innerPoint1Def}
 	I_1' = (-\frac{b}{2}, 0)
@@ -156,7 +155,7 @@ The point $E_1,E_2,I_1,I_2$ can be obtained from $E_1',E_2',I_1',I_2'$ by a mult
 That method is redundant for storage: it uses 8 parameters instead of 6.
 However this poses no practical problem in the scope of the project.
 The one outstanding benefit of this method is it's efficiency in calculations.
-Because it is based on points in a linear space, linear algebraic methods (matrix multiplications) can be used for calculating he projective transformations.
+Because it is based on points in a Euclidean space, linear algebraic methods (matrix multiplications) can be used for calculating the projective transformations.
 
 In this project the second and the third options are used.
 The first, naive method is omitted because it has no considerable advantage over the other two.
@@ -178,7 +177,7 @@ If the smaller quads become unrecognisable because of the low resolution or too 
 The same is true on the other end of the spectrum: if the observer is too close to the marker and the larger ones leave the field of view, the position and orientation can be calculated from the smaller quads.
 
 Figure \figref{rqimExample} shows an example for a marker.
-It is generated with naive algorithm described in the next section, and is not optimal in many ways.
+It is generated with the simple algorithm described in the next section, and is not optimal in many ways.
 Nonetheless it is functional, even if only a fraction of the quads are registered for the measurement.
 \begin{figure}[ht]
 	\centering
@@ -191,7 +190,7 @@ The markers are going to be referred to as RQIM, which means Random Quad Image M
 As the name suggests, the quads are randomly generated and placed on the markers.
 
 Unless otherwise specified, RQIMs use quads with continuous parameter spaces.
-In this chapter there will also be a small introduction to the discrete parameter markers and their potential applications.
+In this chapter there will also be a small introduction to discrete parameter markers and their potential applications.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{Marker generation}
@@ -208,12 +207,12 @@ The generated sizes follow an exponential distribution:
 \begin{equation}
 	s = e^{-x*f}
 \end{equation}
-Where $s$ is the quad size, $x$ is random number between 0 and 1 with constant distribution, and $f$ is a scale factor.
+Where $s$ is the quad size, $x$ is random number between 0 and 1 with uniform distribution, and $f$ is a scale factor.
 Then the $n$ sizes are ordered in descending order.
 
 After the scale factors are picked, the whole quads are generated by the following method.
 A random quad is created with the first (the largest) scale and placed on the image.
-Then another quad is created with the second largest size.
+Then another quad is created with the next largest size.
 After every new quad a check is performed whether or not it can be placed on the marker.
 If it cannot, then a new quad is generated with the same scale factor until it can be placed or the algorithm reached the limit of retries.
 
