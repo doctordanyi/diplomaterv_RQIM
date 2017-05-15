@@ -131,10 +131,10 @@ The gradient detector simply gives a more spread-out and easier to analyse resul
 The smoothing is also implemented using the OpenCV framework, which provides easy access to Gaussian filtering.
 The OpenCV implementation is based on convolution with a configurable Gaussian kernel.
 The kernel size and the deviation in $x$ and $y$ direction can be set.
-The Gaussian kernel and the convolution itself is handled in th framework.
+The Gaussian kernel and the convolution itself is handled in the framework.
 
 %-----------------------------------------------------------------------------------------------
-\section{Line fitters}
+\section{Line fitting}
 %-----------------------------------------------------------------------------------------------
 
 
@@ -143,7 +143,28 @@ The Gaussian kernel and the convolution itself is handled in th framework.
 \subsection{Hough transformation}
 %-----------------------------------------------------------------------------------------------
 
+One of the most commonly used methods for line detection on images is the Hough transform.
+Over it's long history many publications have been made about it's applications, performance and improvements.
 
+Originally it was developed by Paul Hough in 1959 and later patented in 1962\cite{houghPatent}.
+It was intended to be used for machine analysis of bubble chamber photographs.
+In it's modern form (with the $\theta-\rho$ parametrisation) was introduced in 1972 by Duda and Hart\cite{houghThetaRho}.
+The transformation became popular in the image processing community after Ballard's article\cite{BALLARD1981111} about generalising the algorithm for detection of arbitrary shapes.
+There were many optimised and improved variants of the transformation, however the basic concept remained the same.
+In 1990 a publication\cite{XU1990331} introduced the Randomized Hough Transform, which was a fundamentally new approach to the algorithm with notable merits.
+As opposed to the one-to-many mapping of the simple Hough transform, the randomised version uses a convergent many-to-one mapping when creating the parameter space.
+
+After this short historical overview the theory and the application of the transformation will be discussed.
+
+%-----------------------------------------------------------------------------------------------
+\subsubsection{Theory}
+%-----------------------------------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------------------------------
+\subsubsection{Application}
+%-----------------------------------------------------------------------------------------------
 
 %-----------------------------------------------------------------------------------------------
 \subsection{Gradient detector}
