@@ -200,6 +200,19 @@ $\theta$ is in the range of $(0,2\pi)$, $\rho$ is bounded by the image size.
 In this case the image points define sinusoid curves in the parameter plane, and the line detection is done by searching for their intersections.
 % Ide a preziben használt sakktábla hough transzformált
 
+As mentioned before, the line detection is based on a voting scheme.
+The parameter space (in this case a 2 dimensional plane) is divided into \emph{bins}.
+$\rho$ and $\theta$ are quantised in the desired resolution.
+The discrete $(\rho,\theta)$ pairs define the bins.
+Every bin has accumulator.
+When a given $(\rho_i,\theta_i)$ pair gets a vote it's corresponding accumulator is incremented by 1.
+The \textbf{SHT} (Standard Hough Transform) uses one-to-many divergent mapping.
+This means that every non-zero pixel votes for every possible parameter pair it could belong to.
+The above mentioned sinusoid is calculated with the desired resolution for the pixel, and the corresponding accumulators are updated.
+
+When the accumulation phase is completed for the whole image, the local maxima of the accumulators are found.
+First a threshold is applied to the accumulator to suppress the background noise.
+
 %-----------------------------------------------------------------------------------------------
 \subsubsection{Application}
 %-----------------------------------------------------------------------------------------------
