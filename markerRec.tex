@@ -160,7 +160,45 @@ After this short historical overview the theory and the application of the trans
 \subsubsection{Theory}
 %-----------------------------------------------------------------------------------------------
 
-
+The transformation is used to find instances of a model on digital images.
+The models are usually simple geometric shapes like lines, circles or ellipses.
+The curves are described by their parameters, e.g. slope and intercept for a line, centre point and radius for a circle etc..
+Every non-zero pixel\footnote{The transformation works on binary images} votes for the features it could be part of.
+The number of votes is stored for every possible parameter combination.
+Then a threshold is applied to the stored votes, and the remaining parameters are accepted as model instances.
+	
+At first Hough described the algorithm to lines, but later the method would be generalised to any analytic\footnote{The Generalised Hough Transform even extends to arbitrary shapes} curve or shape.
+This theoretical overview is based on the example of line detection.
+The process is the same for every analytic curve, the only difference is the parameter space's number of dimensions.
+The original patent\cite{houghPatent} used the slope-intercept representation of lines.
+\begin{equation}
+y = m*x + b
+\end{equation}
+In this case, the \emph{parameter space} is 2 dimensional and it's axes are $m$ and $b$.
+Every point in the parameter space represent an image space line.
+With this representation every non-zero pixel in the image space transforms into a line in the parameter space.
+For a given $(x_0,y_0)$ pair \eqref{houghLineMB} gives the line in the parameter space. 
+\begin{equation}
+\label{eq:houghLineMB}
+b = -x_0*m + y_0
+\end{equation}
+Collinear points in the image show up in the parameter space as intersecting lines.
+The more lines intersect in a given $(m_0,b_0)$, the more likely it is the image contains the $y = m_0*x + b_0$ line.
+The problem with this parametrisation is that the parameter space is unbounded along both axes.
+Both intersect and slope can have values in the range of $(-\infty, \infty)$.
+Duda and Hart\cite{houghThetaRho} proposed an alternative parametrisation, which turned out to be better for application.
+They used the \emph{normal parametrisation} of a line, shown in \eqref{normalParams}.
+\begin{equation}
+	\label{eq:normalParams}
+	\rho = x*cos(\theta) + y*sin(\theta)
+\end{equation}
+In \eqref{normalParams} $\rho$ means the distance of the line from the image plane's origin.
+$\theta$ is angle of the normal vector of the line.
+% Ide lehet inkább/és egy szemléltető ábra elférne
+If the \emph{normal parametrisation} is used the parameter space becomes finite in both dimensions.
+$\theta$ is in the range of $(0,2\pi)$, $\rho$ is bounded by the image size.
+In this case the image points define sinusoid curves in the parameter plane, and the line detection is done by searching for their intersections.
+% Ide a preziben használt sakktábla hough transzformált
 
 %-----------------------------------------------------------------------------------------------
 \subsubsection{Application}
