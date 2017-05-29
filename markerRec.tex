@@ -194,11 +194,21 @@ They used the \emph{normal parametrisation} of a line, shown in \eqref{normalPar
 \end{equation}
 In \eqref{normalParams} $\rho$ means the distance of the line from the image plane's origin.
 $\theta$ is angle of the normal vector of the line.
-% Ide lehet inkább/és egy szemléltető ábra elférne
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{figures/line_params.png}
+	\caption{Normal line parameters}
+	\label{fig:normalLineParams}
+\end{figure}
 If the \emph{normal parametrisation} is used the parameter space becomes finite in both dimensions.
 $\theta$ is in the range of $(0,2\pi)$, $\rho$ is bounded by the image size.
 In this case the image points define sinusoid curves in the parameter plane, and the line detection is done by searching for their intersections.
-% Ide a preziben használt sakktábla hough transzformált
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.6\textwidth]{figures/Perspective_chessboard_hough_transform.png}
+	\caption{Hough-transform of a chessboard pattern}
+	\label{fig:houghChessBoard}
+\end{figure}
 
 As mentioned before, the line detection is based on a voting scheme.
 The parameter space (in this case a 2 dimensional plane) is divided into \emph{bins}.
@@ -211,7 +221,16 @@ This means that every non-zero pixel votes for every possible parameter pair it 
 The above mentioned sinusoid is calculated with the desired resolution for the pixel, and the corresponding accumulators are updated.
 
 When the accumulation phase is completed for the whole image, the local maxima of the accumulators are found.
-First a threshold is applied to the accumulator to suppress the background noise.
+Usually a threshold is applied in order to reduce noise and eliminate too short line segments.
+The radius of the non-maxima suppression also has impact on the results of the line fitting, it must be chosen carefully.
+After this step the parameters for the most likely line candidates are available.
+
+As the \textbf{SHT} does not provide the endpoints of the line, they must be found by examining the original binary image.
+This can be done by simple checking every pixel along the line with the given parameters and deciding whether or not it is part of the feature.
+If it is desired, lines with gaps can also be accepted with this method.
+For more accurate fitting, a Least Squares approximation can also be applied to the pixels belonging to the line.
+
+
 
 %-----------------------------------------------------------------------------------------------
 \subsubsection{Application}
