@@ -2,6 +2,21 @@
 \chapter{Marker Recognition}\label{sect:marker_recognition}
 %-----------------------------------------------------------------------------------------------
 
+The preprocessing steps used for preparing the images for the line fitters (segmentation, thresholding, filtering etc.) will also be discussed.
+
+The input is the raw image taken\footnote{In the development phase rendered pictures were used for better repeatability} by the observer.
+The first problem is finding the RQIM on the picture.
+When the marker area is located, it is necessary to discard the only partially visible and/or unrecognisable quads.
+At this point there is an image or set of images containing potentially good quads.
+
+%-----------------------------------------------------------------------------------------------
+\section{Preprocessing}
+%-----------------------------------------------------------------------------------------------
+
+The preprocessing is done in two stages.
+The first is the segmentation, when quad-like blobs are found.
+The second step is the preparation of the aforementioned blobs for the line fitting algorithms' needs.
+
 %-----------------------------------------------------------------------------------------------
 \section{Segmentation}
 %-----------------------------------------------------------------------------------------------
