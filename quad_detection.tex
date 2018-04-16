@@ -47,7 +47,6 @@ A typical marker shot with partial visibility is shown figure \figref{partialMar
 \end{figure}
 
 
-
 %-----------------------------------------------------------------------------------------------
 \section{Theoretical Overview}
 %-----------------------------------------------------------------------------------------------
@@ -70,7 +69,7 @@ As opposed to the one-to-many mapping of the simple Hough transform, the randomi
 After this short historical overview the theory and the application of the transformation will be discussed.
 
 %-----------------------------------------------------------------------------------------------
-\subsubsection{Theory}
+\subsubsection{Standard Hough Transform}
 %-----------------------------------------------------------------------------------------------
 
 The transformation is used to find instances of a model on digital images.
@@ -143,27 +142,23 @@ This can be done by simple checking every pixel along the line with the given pa
 If it is desired, lines with gaps can also be accepted with this method.
 For more accurate fitting, a Least Squares approximation can also be applied to the pixels belonging to the line.
 
-
-
 %-----------------------------------------------------------------------------------------------
-\subsubsection{Application}
+\subsubsection{Randomized Hough Transform}
 %-----------------------------------------------------------------------------------------------
 
 %-----------------------------------------------------------------------------------------------
-\subsection{Gradient detector}
+\subsection{Corner Detection}
 %-----------------------------------------------------------------------------------------------
 
 
+%-----------------------------------------------------------------------------------------------
+\subsection{Line Segment Detector}
+%-----------------------------------------------------------------------------------------------
 
 %-----------------------------------------------------------------------------------------------
-\subsection{Corner detector}
+\section{Application for Quad Detection}
 %-----------------------------------------------------------------------------------------------
 
-
-
-%-----------------------------------------------------------------------------------------------
-\subsection{Skeletoning detector}
-%-----------------------------------------------------------------------------------------------
 
 %-----------------------------------------------------------------------------------------------
 \subsection{Conditioning}
