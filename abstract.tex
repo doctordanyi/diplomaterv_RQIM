@@ -9,5 +9,33 @@
 % Abstract in english
 %----------------------------------------------------------------------------
 \chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}
+Image processing has been an intensively researched subject for decades.
+Many algorithms that are used today have been developed in the 1960s.
+At that time, it was a costly tool mainly used by scientists for satellite imagery, medical imaging, optical character recognition, etc...
+The advancement of cheap and powerful general purpose computers opened up new possibilities for research and application.
+Real time image processing became possible.
+An interesting and even more computationally expensive sub-field of computer vision is 3D reconstruction.
+With today's (consumer) technology it is possible to map the 3D world based on image processing solutions.
+Navigational, Augmented and Virtual Reality applications are spreading.
 
+This paper will examine the use of fiducial markers for camera pose estimation using a single camera.
+The goal of pose estimation is to determine the position and orientation of the camera with respect to a known marker.
+This is a complex task, which involves multiple image processing steps, as well as solving optimization problems.
+This work will provide an overview of the steps necessary for estimating the camera pose based on picture of a fiducial marker.
+
+A section of this work will be dedicated to the pose estimation problem.
+There will be a short summary of the problem of reconstructing the view point based on point pairs in the world coordinate system and image points.
+Then some algorithms will be summarised that solved that problem.
+This section will be closed by comparing the benefits and drawbacks of these algorithms and choosing the one that best suits the need of this project.
+
+The choice of the marker also influences accuracy and robustness of the pose estimation solution.
+There are already some marker types available for use (ARTag, glyph, etc...).
+This paper also proposes a new marker type which tries to offer better performance than the aforementioned solutions.
+The applicability of the new marker will be examined in various conditions.
+
+The last major part of this work is about the different possible methods for extracting the markers from the images.
+In that section there will be short theoretical summaries of the detection methods.
+After the theory is covered, implementations of the aforementioned methods will be recommended.
+The performance of the detection algorithms will also be benchmarked on optimal and noisy images.
+Based on the tests results an optimal method will be selected.
 \vfill
