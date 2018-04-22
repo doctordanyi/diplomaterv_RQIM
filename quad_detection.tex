@@ -199,6 +199,23 @@ The pseudo-code representation below is directly quoted from \cite{MATAS2000119}
 9. goto 1.
 \end{lstlisting}
 
+This algorithm has some considerable advantages of the standard and other, previous probabilistic variants of the Hough transform.
+It eliminates the need of \textit{a priori} knowledge necessary for the tuning of probabilistic transforms while it remains much faster than the SHT.
+It should detect every instance of a model detectable by the SHT, at the latest when the voting finishes with the same number of voted pixels as for the standard transform.
+Another positive property of the algorithm is that features are detected as soon as the accumulator allows a decision: it is not necessary for all supporting points to vote.
+The algorithm can also be terminated at any time and still provide some useful output\footnote{However this aspect is not really important for this project}.
+
+Originally this transformation method was developed to speed up the Hough transform, while not being considerably more inaccurate.
+However, an unexpected result was observed by the authors.
+The PPHT outperformed the SHT in accuracy as well as speed.
+In sample images consisting of randomly positioned equal length lines, the PPHT produced less false negatives (missed line segments) and less false positives (incorrectly detected lines).
+This effect is due to the fact that PPHT clears out the votes of the detected lines as soon as they are found.
+This reduces the clutter in the accumulator, resulting in more accurate results, while also being more computationally efficient.
+
+It also worth noting that the PPHT could, in theory, use every enhancement that were developed for the SHT.
+For example, the image gradient of the line segments could be used to reduce the number of pixels selected for voting.
+However, this aspect was not researched in the boundaries of this project.
+
 %-----------------------------------------------------------------------------------------------
 \subsection{Corner Detection}
 %-----------------------------------------------------------------------------------------------
