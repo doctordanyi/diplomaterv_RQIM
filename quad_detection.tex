@@ -217,13 +217,47 @@ For example, the image gradient of the line segments could be used to reduce the
 However, this aspect was not researched in the boundaries of this project.
 
 %-----------------------------------------------------------------------------------------------
+\subsection{Line Segment Detector}
+%-----------------------------------------------------------------------------------------------
+
+%-----------------------------------------------------------------------------------------------
 \subsection{Corner Detection}
 %-----------------------------------------------------------------------------------------------
 
+Detecting quads not necessarily means the detection of line segments.
+Along with the above described methods based on line detection, a corner detecting algorithm was also benchmarked.
+The concept of this detection method is as follows.
+Detect the corners and end-points of a quad with some corner detection algorithm.
+Checks which detected pairs are connected with lines (or edges).
+Based on the connected pairs and their ordering, a quad can be reconstructed.
 
-%-----------------------------------------------------------------------------------------------
-\subsection{Line Segment Detector}
-%-----------------------------------------------------------------------------------------------
+The OpenCV framework provides implementations for some popular corner detection algorithms.
+Specifically the Harris detector and the Shi-Thomas detector are covered.
+In this section will be a short theoretical summary of corner detection in general, and some specifics of the above mentioned solutions.
+
+% Moravec corner measure
+\begin{equation}
+E_{x,y} = \sum_{u,v} w_{u,v} | I_{x+u,y+v}-I_{u,v} |^2
+\end{equation}
+
+% Harris Measure
+\begin{equation}
+R = \det(M) - k(Trace(M))^2
+\end{equation}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{figures/score-isoresponse-contours.jpg}
+	\caption{Image point classification based on Harris measure\cite{Harris88alvey}}
+	\label{fig:harrisMeasure}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{figures/shitomasi_space.png}
+	\caption{Image point classification based on Shi-Tomasi measure. Image source: OpenCV documentation}
+	\label{fig:shitomasiMeasure}
+\end{figure}
 
 %-----------------------------------------------------------------------------------------------
 \section{Application for Quad Detection}
