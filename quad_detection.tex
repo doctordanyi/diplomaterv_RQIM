@@ -231,13 +231,53 @@ Detect the corners and end-points of a quad with some corner detection algorithm
 Checks which detected pairs are connected with lines (or edges).
 Based on the connected pairs and their ordering, a quad can be reconstructed.
 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{figures/score-isoresponse-contours.jpg}
+	\caption{Image point classification based on Harris measure\cite{Harris88alvey}}
+	\label{fig:harrisMeasure}
+\end{figure}
+
 The OpenCV framework provides implementations for some popular corner detection algorithms.
 Specifically the Harris detector and the Shi-Thomas detector are covered.
 In this section will be a short theoretical summary of corner detection in general, and some specifics of the above mentioned solutions.
 
+The basic idea of most corner detection algorithm is the following.
+Considering a local window on an image, corner regions show large change in average intensity if the window is shifted by a small amount in any direction.
+The mathematical formulation of the following idea is shown in \eqref{moravec}.
+$E_{x,y}$ is the change in intensity produced by shifting the window by $(x,y)$.
+$I_{u,v}$ is the intensity of the image at the point $(u,v)$, and $w_{u,v}$ specifies the image window.
+In the simplest case, the image window is rectangular and it is unity in a specified region and zero otherwise.
+
 % Moravec corner measure
 \begin{equation}
-E_{x,y} = \sum_{u,v} w_{u,v} | I_{x+u,y+v}-I_{u,v} |^2
+	E_{x,y} = \sum_{u,v} w_{u,v} | I_{x+u,y+v}-I_{u,v} |^2
+	\label{eq:moravec}
+\end{equation}
+
+A naive approach of corner detection is to use \eqref{moravec} as it is.
+With this method, three cases have to be considered:
+\begin{enumerate}
+	\item \textbf{Flat region:} The windowed image region has almost constant intensity. In that case, all shifts will show small change.
+	\item \textbf{Edge region:} The windowed image region has an edge in it. In that case shift in one direction will result in large change, but shifts in other directions will show low change in intensity.
+	\item \textbf{Corner region:} If the windowed region contains a corner, all shifts will show large change in the intensity.
+\end{enumerate}
+
+The shifts can be chosen in a couple of ways: $90^\circ$ shifts, $45^\circ$ shifts in 8 or 4 directions, etc...
+Actually, this detection method is analysed in \cite{Harris88alvey}, and it is the base of the Harris detector.
+
+However, the the above described corner detector suffers from a number of problems\cite{Harris88alvey}.
+Firstly, it provides an anisotropic response, as only a discrete set of shifts are used.
+To address this issue, the Harris detector uses an analytic expansion of \eqref{moravec} around origin.
+See \eqref{analyticHarris}.
+\begin{equation}
+	E_{x,y} = \sum_{u,v} w_{u,v} ( I_{x+u,y+v}-I_{u,v} )^2 = \sum_{u,v} w_{u,v} ( x \frac{\partial I}{\partial x} + y \frac{\partial I}{\partial y} + O(x^2,y^2))^2
+	\label{eq:analyticHarris}
+\end{equation}
+Another problem is that the above detection method's response is noisy\cite{Harris88alvey} because of the rectangular and binary image window.
+The Harris detector resolves this issue by using a circular and smooth (for example Gaussian) window:
+\begin{equation}
+	w_{u,v} = e^{- \frac{u^2 + v^2}{2\sigma^2}}
 \end{equation}
 
 % Harris Measure
@@ -245,12 +285,7 @@ E_{x,y} = \sum_{u,v} w_{u,v} | I_{x+u,y+v}-I_{u,v} |^2
 R = \det(M) - k(Trace(M))^2
 \end{equation}
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.75\textwidth]{figures/score-isoresponse-contours.jpg}
-	\caption{Image point classification based on Harris measure\cite{Harris88alvey}}
-	\label{fig:harrisMeasure}
-\end{figure}
+
 
 \begin{figure}[ht]
 	\centering
