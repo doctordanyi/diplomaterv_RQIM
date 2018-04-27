@@ -220,6 +220,78 @@ However, this aspect was not researched in the boundaries of this project.
 \subsection{Line Segment Detector}
 %-----------------------------------------------------------------------------------------------
 
+A fundamentally different approach to line detection was described in \cite{LSDDet}.
+The algorithm is named \textbf{LSD} - for Line Segment Detector - by it's creators.
+It is which, unlike the SHT, detects line segments with subpixel accuracy by default.
+The runtime of the process is linear in the pixel count of the processed image.
+It also has fairly good noise suppression.
+Because of these advantageous properties was it considered for use in this project.
+The implementation used was provided by the OpenCV framework.
+In this section will be a short summary of the theory behind this algorithm.
+
+The LSD takes as input a grayscale image and provides a list of line segments as output.
+The line detection is based on the image gradient.
+As a first step, a gradient field is generated from the input image.
+The gradient is taken using a $2x2$ window, see \eqref{lsdGrad}.
+\begin{equation}
+	\begin{split}
+		g_x = \frac{i(x+1, y) + i(x+1, y+1) - i(x,y) - i(x, y+1)}{2}, \\
+		g_y = \frac{i(x, y+1) + i(x+1, y+1) - i(x,y) - i(x+1, y)}{2}
+	\end{split}
+	\label{eq:lsdGrad}
+\end{equation}
+Where $i(x,y)$ is the intensity of the grayscale image at $(x,y)$ point.
+The magnitude of the gradient is calculated by \eqref{lsdGradMagn}.
+\begin{equation}
+	G(x,y) = \sqrt{g_x^2(x,y)+g_y^2(x,y)}
+	\label{eq:lsdGradMagn}
+\end{equation}
+The algorithm uses the angle of the gradient, which will be referred to as LLA (level-line angle), and is calculated by \eqref{lsdGradAngle}.
+\begin{equation}
+	\arctan\Bigg(\frac{g_x(x,y)}{-g_y(x,y)}\Bigg)
+	\label{eq:lsdGradAngle}
+\end{equation}
+The gradient obtained with \eqref{lsdGrad} is the image gradient at the point $(x+0.5, y+0.5)$.
+This half pixel offset is later added to the endpoints of the detected line segments.
+
+Using the gradient information, a level-line field is constructed.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{figures/lsd_level_line_field.png}
+	\caption{Illustration of the level-line field\cite{LSDDet}}
+	\label{fig:lsdLevelLines}
+\end{figure}
+Figure \figref{lsdLevelLines} shows an example of the visualised level-line field.
+The next step of the algorithm is the segmentation of this field.
+It happens based on the level-line angle (the gradient angle defined in \eqref{lsdGradAngle}).
+The pixels that have the same LLA within a given threshold are grouped together.
+These segments are referred to as \textit{line support regions}, see figure \figref{lsdLevelLines} for illustration.
+The segmentation is done with a region growing process.
+
+Each \textit{line support region} is a candidate for a \textit{line segment}\cite{LSDDet}.
+The line segments are represented with a rectangle.
+The main direction of the rectangle is determined by the principal inertial axis of the \textit{line support region}.
+The size of the rectangle is chosen in a way to cover the whole \textit{line support region}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{figures/lsd_aligned_point.png}
+	\caption{Illustration of the aligned points\cite{LSDDet}}
+	\label{fig:lsdAligned}
+\end{figure}
+The pixels in the rectangle that have LLA close to the angle of the rectangle are called \textit{aligned points}\cite{LSDDet}.
+Figure \figref{lsdAligned} shows an example for the rectangular representation and the \textit{aligned points}.
+The \textit{aligned points} are used in the validation step of the algorithm.
+
+The LSD algorithm uses an \textit{a contrario} validation method.
+The idea behind that method is checking if it is probable that the current supporting points are caused by random noise.
+To achieve this, the authors of \cite{LSDDet} created a noise model of the \textbf{level-line field}.
+A \textit{line segment} becomes validated if the expected number of it's occurrences on the noise model is low\footnote{i.e. It is unlikely to be caused by random noise}.
+
+%no tunable parameters előny!! 
+%downscaling
+
+
 %-----------------------------------------------------------------------------------------------
 \subsection{Corner Detection}
 %-----------------------------------------------------------------------------------------------
