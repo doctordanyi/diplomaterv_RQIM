@@ -299,13 +299,21 @@ Where $M$ is composed of the image gradients in the window. \eqref{mMatrix} show
 \end{bmatrix}
 	\label{eq:mMatrix}
 \end{equation}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.75\textwidth]{figures/shitomasi_space.png}
+	\caption{Image point classification based on Shi-Tomasi measure. Image source: OpenCV documentation}
+	\label{fig:shiTomasiMeasure}
+\end{figure}
+
 Note that $M$ describes the shape of the local autocorrelation function's shape at the origin.
 To describe $E$, \cite{Harris88alvey} uses the eigenvalues of the matrix $M$, as it provides a rotationally invariant description.
 With this new method, the above mentioned cases (flat region, edge, corner) can be expressed as follows.
 \begin{enumerate}
 	\item \textbf{Flat region:} Both eigenvalues are small.
 	\item \textbf{Edge region:} One eigenvalue of $M$ is small, the other is comparatively large.
-	\item \textbf{Corner region:} Both eigenvalues are high.
+	\item \textbf{Corner region:} Both eigenvalues are large.
 \end{enumerate}
 Figure \figref{harrisMeasure} shows the above defined regions with respect to the eigenvalues ($\alpha$ and $\beta$ are the eigenvalues of $M$).
 The Harris detector also uses a metric for the "quality" of the detected edges or corners.
@@ -314,16 +322,24 @@ This is noted with $R$ and is defined below.
 \begin{equation}
 R = \det(M) - k(Trace(M))^2
 \end{equation}
+$k$ is a tunable parameter, its value is usually in the range of $0.01-0.05$.
+The higher $R$ is, the more likely that a corner is present in the sampled window.
+In figure \figref{harrisMeasure} the curves mark the regions in the $\alpha-\beta$ space that have the same $R$ value.
 
 This is the short theoretical summary of the Harris detector.
 A detailed mathematical derivation of the formulae can be found in \cite{Harris88alvey}.
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.75\textwidth]{figures/shitomasi_space.png}
-	\caption{Image point classification based on Shi-Tomasi measure. Image source: OpenCV documentation}
-	\label{fig:shitomasiMeasure}
-\end{figure}
+The other corner detection method provided by the OpenCV framework is the Shi-Tomasi detector\cite{Shi94goodfeatures}.
+This detector uses the same concept as the Harris detector, however uses a different measure to classify features as corners.
+The scoring function is defined in \eqref{shiTomasiMeasure}. $\lambda_1, \lambda_2$ is the same as $\alpha, \beta$ for the Harris detector.
+% Shi-Tomasi measure
+\begin{equation}
+	R = \min(\lambda_1, \lambda_2)
+	\label{eq:shiTomasiMeasure}
+\end{equation}
+A feature is classified as a corner if $R$ is greater than a threshold $\lambda_{min}$.
+Figure \figref{shiTomasiMeasure} shows this relation in the $\lambda_1-\lambda_2$ space.
+The Shi-Tomasi measure, while being simpler and requiring less computational power, shows better performance in images\cite{Shi94goodfeatures}.
 
 %-----------------------------------------------------------------------------------------------
 \section{Application for Quad Detection}
