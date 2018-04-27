@@ -225,6 +225,8 @@ The algorithm is named \textbf{LSD} - for Line Segment Detector - by it's creato
 It is which, unlike the SHT, detects line segments with subpixel accuracy by default.
 The runtime of the process is linear in the pixel count of the processed image.
 It also has fairly good noise suppression.
+Another attractive property of the algorithm is that it doesn't have any parameters that require tuning by the user.
+Every one of it's parameters are automatically tuned "under the hood".
 Because of these advantageous properties was it considered for use in this project.
 The implementation used was provided by the OpenCV framework.
 In this section will be a short summary of the theory behind this algorithm.
@@ -288,9 +290,72 @@ The idea behind that method is checking if it is probable that the current suppo
 To achieve this, the authors of \cite{LSDDet} created a noise model of the \textbf{level-line field}.
 A \textit{line segment} becomes validated if the expected number of it's occurrences on the noise model is low\footnote{i.e. It is unlikely to be caused by random noise}.
 
-%no tunable parameters előny!! 
-%downscaling
+The algorithm detects the sharp transients in the image gradient.
+Technically, it detects edges.
+A line on the image produces two line segments as output, for it's two light-dark transition.
+The line segments detected by LSD are directional: the order of the endpoints of a line segments depend on the direction of the light-dark transition.
 
+After this short summary of the algorithm\footnote{The description of the algorithm in pseudo-code form can be found in \cite{LSDDet}}, some of it's more interesting details will be described.
+
+First off, the algorithm has a preprocessing step.
+Before calculating the image gradient, the input image is downscaled to $80\%$ along both axes\footnote{or to $64\%$ of it's area}.
+This is done to cope with aliasing and quantisation artefacts present in most images, for example the staircase effect.
+The alternative to this subsampling would be the blurring of the image, however that would have some unfavourable side effects.
+Blurring would affect the statistics of the \textit{a contrario} model.
+Some structures would be detected in a blurred white noise image.
+With a correct down-sampling the white noise statistics can be preserved.
+The choice of scale factor was an optimum between filtering out noise and keeping valuable data.
+
+Another interesting feature of the algorithm is the order in which the possible lines are processed.
+LSD is a greedy algorithm, it tries to process the most significant edges first.
+Pixels with higher gradient magnitude correspond to more contrasted edges.
+In order to process the pixels with the highest contrast first, some ordering is needed.
+However, most sorting algorithm require $O(n \log(n))$ operations.
+To avoid this, LSD uses a pseudo ordering that can be done in linear time.
+The interval between zero and the highest gradient magnitude in the image is divided into $1024$ equal bins.
+Then each pixel is assigned to the bin corresponding to it's gradient magnitude.
+The processing (region growing) is done first on the pixels selected from the bin containing the largest magnitudes.
+$1024$ levels are enough to almost strictly order the gradients generated from a grayscale image with $256$ possible intensities.
+
+To avoid unnecessary processing, a threshold is also applied to the gradient magnitudes.
+Pixels with a low gradient represent flat regions or slowly changing intensities.
+These pixels are marked and are not taking part in the later processing steps.
+This threshold also helps reduce the effects of quantisation noise.	
+
+The rectangular approximation of the line segment happens after the segmentation of the level-line field.
+The rectangle is calculated based on the gradient magnitudes of the pixels belonging to a segment.
+The gradient magnitude is viewed as the "mass"\cite{LSDDet} of the pixel, and the centre of the rectangle is the mass centre point of the segment.
+The coordinates of the centre point are calculated by the formula given in \eqref{lsdTcpCord}
+\begin{equation}
+	\begin{split}
+		c_x = \frac{\sum_{j \in Region} G(j) * x(j)}{\sum_{j \in Region} G(j)} \\
+		c_y = \frac{\sum_{j \in Region} G(j) * y(j)}{\sum_{j \in Region} G(j)}
+	\end{split}
+	\label{eq:lsdTcpCord}
+\end{equation}
+Where $G(j)$ is the gradient magnitude of pixel $j$, calculated by \eqref{lsdGradMagn}.
+$x(j)$ and $y(j)$ represent the $x$ and $y$ coordinate of point $j$, respectively.
+The angle of the main rectangle is defined to be the principal inertial axis of the segment.
+It can be calculated from the eigenvector of associated with the smallest eigenvalue of the matrix of \eqref{lsdMMat}.\cite{LSDDet}
+\begin{equation}
+	M =
+	\begin{bmatrix}
+		m^{xx} && m^{xy} \\
+		m^{xy} && m^{yy}
+	\end{bmatrix}
+	\label{eq:lsdMMat}
+\end{equation}
+Where $m^{xx}, \dots$ is defined below.
+\begin{equation}
+	\begin{split}
+		m^{xx} = \frac{\sum_{j \in Region} G(j) * (x(j) - c_x)^2}{\sum_{j \in Region} G(j)} \\
+		m^{yy} = \frac{\sum_{j \in Region} G(j) * (y(j) - c_y)^2}{\sum_{j \in Region} G(j)} \\
+		m^{xy} = \frac{\sum_{j \in Region} G(j) * (x(j) - c_x)(y(j) - c_y)}{\sum_{j \in Region} G(j)}
+	\end{split}
+\end{equation}
+
+This is the short overview of the LSD algorithm, with some of it's more interesting nuances highlighted.
+The full description is available in \cite{LSDDet}.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{Corner Detection}
@@ -332,7 +397,7 @@ With this method, three cases have to be considered:
 The shifts can be chosen in a couple of ways: $90^\circ$ shifts, $45^\circ$ shifts in 8 or 4 directions, etc...
 Actually, this detection method is analysed in \cite{Harris88alvey}, and it is the base of the Harris detector.
 
-\begin{figure}[ht]
+\begin{figure}[t]
 	\centering
 	\includegraphics[width=0.75\textwidth]{figures/score-isoresponse-contours.jpg}
 	\caption{Image point classification based on Harris measure\cite{Harris88alvey}}
