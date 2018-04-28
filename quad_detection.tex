@@ -3,22 +3,19 @@
 %-----------------------------------------------------------------------------------------------
 
 In this chapter there will be a summary of the image processing algorithms tried and used for the recognition of the fiducial markers.
+The input of this recognition step is the image taken by the camera, and the output is a list of quads belonging to the marker visible on the image.
+As a common preprocessing step for all quad detection methods segmentation is performed on the input image: quad-like blobs are extracted and separately passed to the quad detector logic.
+This step of the \textit{marker recognition process} takes the segmented input image and initialises quad structures based on the observed picture.
+The quad structures are then passed to the next processing step: the pose estimation logic.
+
+The process here diverges depending on which quad detection algorithm is used.
+They all need differently conditioned input images for optimal performance.
 From a computer vision point of view the task is to detect joint line segments.
 This is a well researched task in image processing, there are many well tried algorithms for it.
+For example, the problem can be solved by detecting lines and finding their intersection, or detecting corners and figuring out how they are connected, etc...
+The detection routines not necessarily have the same output format\footnote{Some return line segments defined by their endpoint, others use the polar representation of a line etc.}, so conversion may also be needed.
 
-In this chapter will be a short summary of the algorithms used for testing and performance comparison.
-
-
-The general flow of processing is the same for every line fitting solution.
-
-
-The process here diverges depending on which line fitting algorithm is used.
-They all need differently conditioned input images for optimal performance.
-The line fitter routines not necessarily have the same output format\footnote{Some return line segments defined by their endpoint, others use the polar representation of a line etc.}, so conversion may be needed.
-This is the end of the marker recognition phase.
-This step of the process takes the raw input image and initiates quad structures based on the observed picture.
-
-Three separate line fitting techniques and their variants were profiled in this experiment.
+Three separate quad detection techniques and their variants were profiled in this experiment.
 \begin{itemize}
 	\item Hough-transformation
 	\item Corner detection
@@ -45,7 +42,7 @@ A typical marker shot with partial visibility is shown figure \figref{partialMar
 	\caption{Partially visible marker (taken with commercial smartphone)}
 	\label{fig:partialMarkerShot}
 \end{figure}
-
+In this chapter will be a short summary of the algorithms used for testing and performance comparison.
 
 %-----------------------------------------------------------------------------------------------
 \section{Theoretical Overview}
