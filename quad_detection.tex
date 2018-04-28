@@ -494,7 +494,6 @@ The Shi-Tomasi measure, while being simpler and requiring less computational pow
 \section{Application for Quad Detection}
 %-----------------------------------------------------------------------------------------------
 
-
 %-----------------------------------------------------------------------------------------------
 \subsection{Conditioning}
 %-----------------------------------------------------------------------------------------------
@@ -517,4 +516,160 @@ The OpenCV implementation is based on convolution with a configurable Gaussian k
 The kernel size and the deviation in $x$ and $y$ direction can be set.
 The Gaussian kernel and the convolution itself is handled in the framework.
 
+%-----------------------------------------------------------------------------------------------
+\section{Performance comparison}
+%-----------------------------------------------------------------------------------------------
 
+%-----------------------------------------------------------------------------------------------
+\subsection{Test method}
+%-----------------------------------------------------------------------------------------------
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Error measure}
+%-----------------------------------------------------------------------------------------------
+
+In order to compare the performance of the quad detection algorithms some kind of scoring function is needed.
+For this the use of detection error seems intuitive.
+As a quad has 6 independent parameters, and these are stored in 2 different representations, defining an error measure is not straightforward.
+Because of this, several scoring functions were defined during development, and many of those are actually used for comparing the algorithms.
+
+As described in the previous section, the calculation of detection error is based on rendering a known quad and running the detection algorithms on it.
+After the detection is done and it is successful\footnote{A quad instance is returned, which is not guaranteed}, some kind os measure is necessary to calculate the "distance" of the detected and the original quad.
+Below will be the definitions the error measures used within this project to compare the quad detection algorithms.
+The notations used in the formulae are listed here.
+% notation
+\begin{itemize}
+	\item $Q^o, Q^d$: Original quad, detected quad
+	\item $Q_p$: Parameter $p$ of quad $Q$, where $p$ can be any of the followings: $\{s, m_a, m_b, \alpha, \beta, \gamma\}$. 
+	\item $C^o, C^d$: Corner set of the original and the detected quad
+	\item $C_i^o, C_i^d$: The $i.$ corner of the original and the detected quad
+	\item $C_{i,x}$: $x$ coordinate of the $i.$ corner of a quad
+	\item $P^o, P^d$: the parameter space of the original and the detected quad. Using Section \sectref{quad}'s notation, it can be defined as $P = \{s, m_a, m_b, \alpha, \beta, \gamma\}$
+\end{itemize}
+
+As mentioned above, there are two different quad representations used\footnote{for details, see Section \sectref{quad}}.
+One stores the coordinates of the corners, the other the quad parameters.
+The most intuitive way for error calculation is based on the corner representation.
+We can calculate the distance between the detected and the original corner.
+\eqref{errAbsSumCoord}, \eqref{errAbsAvgCoord} and \eqref{errRelAvgCoord} define 3 scoring functions based on this idea. 
+% sum of absolute position error
+\begin{equation}
+	E_{c,abs} = \sum_{1}^{4} \sqrt{(C_{i,x}^o - C_{i,x}^d)^2 + (C_{i,y}^o - C_{i,y}^d)^2}
+	\label{eq:errAbsSumCoord}
+\end{equation}
+The first possibility is to calculate the sum of the distance between the detected and the original corners.
+This naive approach has many drawbacks.
+The main concern is that it does not take into account the \textit{size} of the quad.
+The cumulation of error from every corner also distorts the results.
+In reality, if every corner has some amount of noise in it's position, the quad parameter representation can still be quite close to the original.
+However, if only one corner has a larger amount of error, the distortion will be much higher.
+This error measure reports the same amount for both cases.
+% avg absolute position error
+\begin{equation}
+	E_{c,avg} = \frac{1}{4} E_{c,abs}
+	\label{eq:errAbsAvgCoord}
+\end{equation}
+The above points are also true is the average of the absolute displacements are used.
+
+Better results can be achieved by using relative coordinate error.
+The formula used by this work can be seen in \eqref{errRelAvgCoord}.
+The problem of the error depending on the quad \textit{size} is solved by this.
+As seen on the formula, the coordinate error is compared to the coordinates of the original quad corners.
+% avg relative position error
+\begin{equation}
+	E_{c,rel} = \frac{1}{4}\sum_{1}^{4} \frac{\sqrt{(C_{i,x}^o - C_{i,x}^d)^2 + (C_{i,y}^o - C_{i,y}^d)^2}}{\sqrt{(C_{i,x}^o)^2 + (C_{i,y}^o)^2}}
+	\label{eq:errRelAvgCoord}
+\end{equation}
+\eqref{errRelAvgCoord} was chosen for the comparison of algorithms based on the accuracy of corners detected.
+
+The following scoring functions are based on the other quad representation.
+This has considerable advantages compared to the corner based representation, because a much clearer picture of the distribution of error factors is obtained.
+The quad parameters can be classified into 3 sets.
+The is the quad size, which is an absolute length, measured in pixels.
+Another category is formed of the angle parameters: the angle between the \textit{base} and each \textit{arm}, and the orientation (which is basically the angle between the \textit{base} and the image frame).
+The third is the multiplier parameter.
+These are not absolute lengths, they are calculated based on the base length.
+Below will be proposed error measures for the three categories.
+
+For the angle parameters, as a first approach an absolute error measure was defined.
+As \eqref{errAbsSumAngle} shows, the 2 angle errors are summed.
+As an alternative, their average also can be used.
+Contrary to the coordinate errors, here the absolute angle error does not depend on the size of the quad.
+These scoring functions can be useful if the absolute magnitude of the error is of interest.
+% sum of absolute angle error
+\begin{equation}
+	E_{a,abs} = |Q_\alpha^o - Q_\alpha^d| + |Q_\beta^o - Q_\beta^d|
+	\label{eq:errAbsSumAngle}
+\end{equation}
+% avg absolute angle error
+\begin{equation}
+	E_{a,avg} = \frac{1}{2} E_{a,abs}
+	\label{eq:errAbsAvgAngle}
+\end{equation}
+Of course, relative error can also be defined for the angles, too.
+See \eqref{errRelAvgAngle}.
+This was used for comparison, because the relative values given as percentages were easier to evaluate.
+% avg relative angle error
+\begin{equation}
+	E_{a,rel} = \frac{1}{2}\Bigg(\frac{|Q_\alpha^o - Q_\alpha^d|}{|Q_\alpha^o|} + \frac{|Q_\beta^o - Q_\beta^d|}{|Q_\beta^o|}\Bigg)
+	\label{eq:errRelAvgAngle}
+\end{equation}
+
+The multipliers are very similar to the angles in terms of error metrics.
+They describe a relative parameter, so the quad scale is not an issue here.
+Nonetheless, both absolute and relative error measures were defined for completeness.
+Similarly to the angles, both the sum os absolute errors and their average can be meaningful, depending on what is the goal of analysis.
+% sum of absolute multiplier error
+\begin{equation}
+	E_{m,abs} = |Q_{ma}^o - Q_{ma}^d| + |Q_{mb}^o - Q_{mb}^d|
+	\label{eq:errAbsSumMul}
+\end{equation}
+% avg absolute multiplier error
+\begin{equation}
+	E_{m,avg} = \frac{1}{2} E_{m,abs}
+	\label{eq:errAbsAvgMul}
+\end{equation}
+For readability, the relative measure was chosen as a basis for comparison.
+The values are normed with the respective parameter of the original (generated, thus it's parameters are known to an arbitrary level of precision) quad.
+% avg relative multiplier error
+\begin{equation}
+	E_{m,rel} = \frac{1}{2}\Bigg(\frac{|Q_{ma}^o - Q_{ma}^d|}{|Q_{ma}^o|} + \frac{|Q_{mb}^o - Q_{mb}^d|}{|Q_{mb}^o|}\Bigg)
+	\label{eq:errRelAvgMul}
+\end{equation}
+
+Orientation is handled differently from the other angle parameters.
+This is due to two reasons.
+First, it's conceptually different.
+It describes a rotation as opposed to $\alpha$ and $\beta$ that describe angles between lines segments.
+The second reason is mainly empirical: it turned out to be less error-prune than the other two.
+% absolute orientation error
+\begin{equation}
+	E_{o,abs} = |Q_\gamma^o - Q_\gamma^d|
+	\label{eq:errAbsOrient}
+\end{equation}
+% relative orientation error
+\begin{equation}
+	E_{o,rel} = \frac{|Q_\gamma^o - Q_\gamma^d|}{|Q_\gamma^o|}
+	\label{eq:errRelOrient}
+\end{equation}
+Similarly to the previously discussed categories, the absolute and relative errors are defined.
+Equations \eqref{errAbsOrient} and \eqref{errRelOrient} show the definitions.
+For comparison, as before, the relative error was used.
+
+
+% absolute size error
+\begin{equation}
+	E_{o,abs} = |Q_s^o - Q_s^d|
+	\label{eq:errAbsSize}
+\end{equation}
+
+% relative size error
+\begin{equation}
+	E_{o,rel} = \frac{|Q_s^o - Q_s^d|}{|Q_s^o|}
+	\label{eq:errRelSize}
+\end{equation}
+
+% distance in parameter space
+\begin{equation}
+	E_{sum} = \sqrt{\sum_{p \in P^o, q \in P^d} (p - q)^2}
+\end{equation}
