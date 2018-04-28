@@ -656,20 +656,48 @@ Similarly to the previously discussed categories, the absolute and relative erro
 Equations \eqref{errAbsOrient} and \eqref{errRelOrient} show the definitions.
 For comparison, as before, the relative error was used.
 
-
+The \textit{base length} or \textit{size} is the only absolute length parameter in this quad representation.
+It makes sense to handle it separately, because many other parameters (orientation, arm multipliers) depend on it.
+The scoring functions are defined below, similarly to the previous ones.
 % absolute size error
 \begin{equation}
 	E_{o,abs} = |Q_s^o - Q_s^d|
 	\label{eq:errAbsSize}
 \end{equation}
-
 % relative size error
 \begin{equation}
 	E_{o,rel} = \frac{|Q_s^o - Q_s^d|}{|Q_s^o|}
 	\label{eq:errRelSize}
 \end{equation}
+For consistencies sake, also the relative error was used here for comparison.
 
+The above defined error functions provide useful information if the distribution of error between the quad parameters is interesting.
+However, this parametric quad representation lacks a scoring function that would provide information on the error magnitude as a whole.
+To resolve this, one more error measure is proposed and used by this work.
+The independent parameters of a quad can be viewed as coordinates in a 6 dimensional space.
+The analogy stands, as the parameter space is a subset of $\mathbb{R}^6$.
+A distance in that 6-dimensional space can be defined, see \eqref{errQuadSpaceDist}.
 % distance in parameter space
 \begin{equation}
 	E_{sum} = \sqrt{\sum_{p \in P^o, q \in P^d} (p - q)^2}
+	\label{eq:errQuadSpaceDist}
 \end{equation}
+This gives useful information about the absolute magnitude of error in the parametric wuad representation.
+Of course, the relative version of the above error measure can also be defined.
+% distance in parameter space, relative
+\begin{equation}
+E_{sum, rel} = \frac{\sqrt{\sum_{p \in P^o, q \in P^d} (p - q)^2}}{\sqrt{\sum_{p \in P^o} p^2}}
+\label{eq:errQuadSpaceDistRel}
+\end{equation}
+With this, a complete set of error measurement functions are defined.
+
+It is reasonable to use both quad representations, thus both sets of error measures.
+The corner representation is intuitive.
+Also, as it is stated in the previous chapters of this work, the pose estimation algorithms use corresponding point pairs.
+So the most relevant error component seems to be the one present in the quad corner coordinates, as it directly influences the accuracy of the calculated camera pose.
+
+However, the two representations are equivalent.
+It is possible to convert between the two without loosing useful information.
+If discrete markers are used, with the parametric representation it is possible to further refine the detection results.
+This can be done by replacing the detected quad with the closest known discrete one\footnote{This will be elaborated later on. This sentence is just to give a general idea and is not technically correct.}.
+Currently this aspect of the marker is not implemented, it can be a subject of future improvements.
