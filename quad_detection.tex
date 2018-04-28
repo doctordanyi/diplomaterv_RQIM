@@ -524,6 +524,40 @@ The Gaussian kernel and the convolution itself is handled in the framework.
 \subsection{Test method}
 %-----------------------------------------------------------------------------------------------
 
+In this project multiple quad detection solutions are prototyped.
+The best is needed to be selected.
+It is not a trivial choice, as there are many criteria to be satisfied.
+The algorithm needs to be accurate, robust, relatively fast, work on noisy images, etc...
+Thorough testing is necessary to select the best algorithm for the task.
+The tests should be reproducible and statistically relevant.
+In this section will be a description of the testing method used in this project.
+
+As a first step, a data source is necessary for the algorithms under test.
+For this, randomly generated quads were used.
+The random generator was constructed in a way that allowed some control over the generated data: the \textit{wuad size} and the range of the other parameters could be set.
+To provide data for extensive testing, a large data set was generated.
+Every algorithm received random quads with sizes ranging from $1\%$ to $75\%$ of the image size, in $1\%$ increments.
+From each size 1000 quads were generated and provided to the detectors.
+These values were chosen to cover a significant portion of the parameter space and to provide statistically significant results.
+
+The generated quads were rendered by OpenCV and the generated images were the inputs for the detection algorithms.
+The testing was done with images containing only a single quad.
+There are many reasons for this.
+First, it is important to limit the test scope.
+In this step the quad detection was benchmarked. not the segmentation logic.
+In the real use-case, the input image containing a marker is segmented, and the segments are fed to the quad detector separately.
+The images were rendered with different levels of additive Gaussian White Noise.
+The test series were run first on optimal images, and after that rerun with more and more added noise.
+This was done to test the robustness.
+Although the GWN covers only a small portion of the noise in a real image, these test did provide some insight.
+
+The accuracy of the detection was analysed based on many different error measure.
+Those are defined in the next section.
+The experiments measured the expected value and the standard deviation of error of the algorithms.
+These were plotted at the end of the test cycle.
+
+%test cycle in pseudo code
+
 %-----------------------------------------------------------------------------------------------
 \subsection{Error measure}
 %-----------------------------------------------------------------------------------------------
