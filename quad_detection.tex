@@ -48,6 +48,21 @@ In this chapter will be a short summary of the algorithms used for testing and p
 \section{Theoretical Overview}
 %-----------------------------------------------------------------------------------------------
 
+Before going over how the image processing algorithms were applied to achieve quad detection, a short theoretical overview of the used algorithms will be presented.
+To solve the problem at hand (i.e. to detect quad instances on an image) multiple well known image processing algorithms were used.
+For line detection two variants of the Hough transform (Standard\cite{houghThetaRho} and Probabilistic\cite{MATAS2000119}) and a fundamentally different algorithm, the \textbf{LSD} was used.
+As mentioned before, not only solutions based on line detection were tried during the course of this work; corner detection methods were also tried.
+The Harris corner detector\cite{Harris88alvey} and it's improved version the Shi-Tomasi detector\cite{Shi94goodfeatures} were compared.
+
+Although the implementation of the aforementioned algorithms were provided by the OpenCV framework, it was far from unnecessary to understand how each algorithm works.
+They show their optimal performance on differently conditioned inputs.
+For example, corner detection works well on "raw" images, while the Hough-transform based solutions need edge images of skeletons to perform.
+It was important to know the limitations of each solution.
+All in all, the understanding of the inner workings of the algorithms used was helpful in choosing the "right tool for the job".
+
+In this section there will be the theoretical overview of the above mentioned algorithms, with some historical context.
+Their comparative advantages for this project will also be highlighted.
+
 %-----------------------------------------------------------------------------------------------
 \subsection{Hough transformation}
 %-----------------------------------------------------------------------------------------------
