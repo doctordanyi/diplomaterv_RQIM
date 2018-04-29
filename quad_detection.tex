@@ -556,8 +556,26 @@ Those are defined in the next section.
 The experiments measured the expected value and the standard deviation of error of the algorithms.
 These were plotted at the end of the test cycle.
 
+The test method is summarised by the following pseudo-code program.
 %test cycle in pseudo code
+\begin{lstlisting}
+quad_groups = empty_list
+for size in [0.01:0.01:0.75]:
+	group = generate_quads(count=1000, size=size)
+	quad_groups.append(group)
 
+error_series = empty_list
+for group in quad_groups:
+	pairs = empty_list
+	for quad in group:
+		img = render(quad)
+		img = add_noise(img, noise_level)
+		detected_quad = detector.detect_quad(img)
+		pairs.append(quad, detected_quad)
+	group_error = calculate_error(pairs)
+	error_series.append(group_error)
+display_result(error_series)	
+\end{lstlisting}
 %-----------------------------------------------------------------------------------------------
 \subsection{Error measure}
 %-----------------------------------------------------------------------------------------------
