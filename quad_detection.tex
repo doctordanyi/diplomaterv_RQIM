@@ -517,6 +517,13 @@ The kernel size and the deviation in $x$ and $y$ direction can be set.
 The Gaussian kernel and the convolution itself is handled in the framework.
 
 %-----------------------------------------------------------------------------------------------
+\subsection{LSD Quad Detector}
+%-----------------------------------------------------------------------------------------------
+
+
+
+
+%-----------------------------------------------------------------------------------------------
 \section{Performance comparison}
 %-----------------------------------------------------------------------------------------------
 
@@ -576,6 +583,9 @@ for group in quad_groups:
 	error_series.append(group_error)
 display_result(error_series)	
 \end{lstlisting}
+
+The test framework, similarly to the tested algorithm, is implemented in python.
+
 %-----------------------------------------------------------------------------------------------
 \subsection{Error measure}
 %-----------------------------------------------------------------------------------------------
@@ -753,3 +763,202 @@ It is possible to convert between the two without loosing useful information.
 If discrete markers are used, with the parametric representation it is possible to further refine the detection results.
 This can be done by replacing the detected quad with the closest known discrete one\footnote{This will be elaborated later on. This sentence is just to give a general idea and is not technically correct.}.
 Currently this aspect of the marker is not implemented, it can be a subject of future improvements.
+
+%-----------------------------------------------------------------------------------------------
+\subsection{LSD Quad Detector results}
+%-----------------------------------------------------------------------------------------------
+
+In this section the performance of the Line Segment Detector-based quad detection method will be evaluated.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_rec_unrec_count.png}
+	\caption{Recognised and unrecognised quads with respect to quad size, using the LSD method}
+	\label{fig:lsdResRecCnt}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_coordinate_error.png}
+	\caption{Relative coordinate error with respect to quad size, using the LSD method}
+	\label{fig:lsdResCoordErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_base_length_error.png}
+	\caption{Relative base length error with respect to quad size, using the LSD method}
+	\label{fig:lsdResBaseErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_multiplier_error.png}
+	\caption{Relative multiplier error with respect to quad size, using the LSD method}
+	\label{fig:lsdResMulErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_angle_error.png}
+	\caption{Relative angle error with respect to quad size, using the LSD method}
+	\label{fig:lsdResAngleErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_orientation_error.png}
+	\caption{Relative orientation error with respect to quad size, using the LSD method}
+	\label{fig:lsdResOrientErr}
+\end{figure}
+
+\clearpage
+
+%-----------------------------------------------------------------------------------------------
+\subsection{SHT Quad Detector results}
+%-----------------------------------------------------------------------------------------------
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/sht_rec_unrec_count.png}
+	\caption{Recognised and unrecognised quads with respect to quad size, using the SHT method}
+	\label{fig:shtResRecCnt}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_coordinate_error.png}
+	\caption{Relative coordinate error with respect to quad size, using the SHT method}
+	\label{fig:shtResCoordErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_base_length_error.png}
+	\caption{Relative base length error with respect to quad size, using the SHT method}
+	\label{fig:shtResBaseErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_multiplier_error.png}
+	\caption{Relative multiplier error with respect to quad size, using the SHT method}
+	\label{fig:shtResMulErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_angle_error.png}
+	\caption{Relative angle error with respect to quad size, using the SHT method}
+	\label{fig:shtResAngleErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_orientation_error.png}
+	\caption{Relative orientation error with respect to quad size, using the SHT method}
+	\label{fig:shtResOrientErr}
+\end{figure}
+
+\clearpage
+
+%-----------------------------------------------------------------------------------------------
+\subsection{PHT Quad Detector results}
+%-----------------------------------------------------------------------------------------------
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/pht_rec_unrec_count.png}
+	\caption{Recognised and unrecognised quads with respect to quad size, using the PHT method}
+	\label{fig:phtResRecCnt}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_coordinate_error.png}
+	\caption{Relative coordinate error with respect to quad size, using the PHT method}
+	\label{fig:phtResCoordErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_base_length_error.png}
+	\caption{Relative base length error with respect to quad size, using the PHT method}
+	\label{fig:phtResBaseErr}
+\end{figure}
+
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_multiplier_error.png}
+	\caption{Relative multiplier error with respect to quad size, using the PHT method}
+	\label{fig:phtResMulErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_angle_error.png}
+	\caption{Relative angle error with respect to quad size, using the PHT method}
+	\label{fig:phtResAngleErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_orientation_error.png}
+	\caption{Relative orientation error with respect to quad size, using the PHT method}
+	\label{fig:phtResOrientErr}
+\end{figure}
+
+\clearpage
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Corner Quad Detector results}
+%-----------------------------------------------------------------------------------------------
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/corner_rec_unrec_count.png}
+	\caption{Recognised and unrecognised quads with respect to quad size, using the Corner method}
+	\label{fig:cornerResRecCnt}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_coordinate_error.png}
+	\caption{Relative coordinate error with respect to quad size, using the Corner method}
+	\label{fig:cornerResCoordErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_base_length_error.png}
+	\caption{Relative base length error with respect to quad size, using the Corner method}
+	\label{fig:cornerResBaseErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_multiplier_error.png}
+	\caption{Relative multiplier error with respect to quad size, using the Corner method}
+	\label{fig:cornerResMulErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_angle_error.png}
+	\caption{Relative angle error with respect to quad size, using the Corner method}
+	\label{fig:cornerResAngleErr}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_orientation_error.png}
+	\caption{Relative orientation error with respect to quad size, using the Corner method}
+	\label{fig:cornerResOrientErr}
+\end{figure}
+
+\clearpage
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Summary}
+%-----------------------------------------------------------------------------------------------
