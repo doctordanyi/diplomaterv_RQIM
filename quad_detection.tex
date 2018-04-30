@@ -932,12 +932,19 @@ Thus, further development of this algorithm is not recommended, nor will it be u
 \subsection{PHT Quad Detector results}
 %-----------------------------------------------------------------------------------------------
 
+In this section the performance of the probabilistic Hough transform-based quad detector will be evaluated.
+The inner workings of the detector are very similar to the previously described SHT-based one.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/pht_rec_unrec_count.png}
 	\caption{Recognised and unrecognised quads with respect to quad size, using the PHT method}
 	\label{fig:phtRecCnt}
 \end{figure}
+Nonetheless, this method is shows both better performance and requires less computation.
+It was stated in the theoretical overview of the PHT that reducing the clatter in the accumulator improves the line detection results considerably.
+Figure \figref{phtRecCnt} confirms this.
+Opposed to SHT, the PHT based method detects even the smallest quads used for experimentation.
+This detector proved to be the best consistently detecting a quad, although it's accuracy is not unparalleled.
 
 \begin{figure}[ht]
 	\centering
@@ -945,6 +952,10 @@ Thus, further development of this algorithm is not recommended, nor will it be u
 	\caption{Relative coordinate error with respect to quad size, using the PHT method}
 	\label{fig:phtRelCoordErr}
 \end{figure}
+The overall accuracy (that is, average relative error in corner the corner coordinates) is shown in figure \figref{phtRelCoordErr}.
+Up from $0.1$ scale factor the error stays well below $20\%$, for most sizes (up from $0.2$) below $10\%$.
+The minimum error is about $2\%$.
+Note that the LSD detector in it's optimal range outperforms this, especially if the deviation is examined.
 
 \begin{figure}[ht]
 	\centering
@@ -952,7 +963,10 @@ Thus, further development of this algorithm is not recommended, nor will it be u
 	\caption{Relative base length error with respect to quad size, using the PHT method}
 	\label{fig:phtRelBaseErr}
 \end{figure}
-
+The error distribution between the quad parameters follows that of the SHT, only the magnitudes are much smaller.
+The base length (figure \figref{phtRelBaseErr}), the side multipliers (figure \figref{phtRelMulErr}), and the angle error (figure \figref{phtRelAngleErr}) are in the same range.
+For most sizes the error are below $10\%$, for large quads reaching their minimum of $2\%$.
+Their deviation also follows the same trend, declining from $20\%$ to $10\%$.
 
 \begin{figure}[ht]
 	\centering
@@ -960,7 +974,15 @@ Thus, further development of this algorithm is not recommended, nor will it be u
 	\caption{Relative multiplier error with respect to quad size, using the PHT method}
 	\label{fig:phtRelMulErr}
 \end{figure}
+As for the orientation, similarly to the other detectors, it is the most accurately measurable quad parameter.
+It is always measured within $4\%$ error margin, but for most sizes, within $2\%$.
+The reason for this is was explained at the LSD detector: it depends only on the angle of the largest feature of the quad.
+The error function is shown at figure \figref{phtRelOrientErr}.
 
+This method significantly outperforms the SHT quad detector.
+The two methods share most of the auxiliary logic between them.
+They share the heuristics for the Hough parameter calculation (they differ in a scale factor for the threshold, as the PHT works with much less points), the segment matching, and most other functions as well.
+This significant difference in performance is mainly due to the underlying transformation method.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_angle_error.png}
@@ -968,6 +990,11 @@ Thus, further development of this algorithm is not recommended, nor will it be u
 	\label{fig:phtRelAngleErr}
 \end{figure}
 
+If we look at the possible refinements of the algorithm, there is plenty.
+Some have already been mentioned in the previous section, with the SHT algorithm.
+Better parameter tuning is possible.
+The skeletoning process which provides the input to the PHT algorithm also can be improved.
+Incorporating the image gradient information in the transform would also significantly improve the results.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_orientation_error.png}
