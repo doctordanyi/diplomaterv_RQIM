@@ -846,13 +846,20 @@ Only the angle of the line is important.
 	\label{fig:lsdRelOrientErr}
 \end{figure}
 
+Although the runtime of the algorithms was not measured during the experiments, the LSD method was noticeably faster than the others.
+For any meaningful statistics on runtime, an equally well optimised, preferably C++ implementation of the algorithms would be necessary.
+This was not in the scope of this project.
 \clearpage
 
 %-----------------------------------------------------------------------------------------------
 \subsection{SHT Quad Detector results}
 %-----------------------------------------------------------------------------------------------
 
-\begin{figure}[ht]
+This quad detection method is built around the Standard Hough Transform, with all of it's well known benefits and drawbacks.
+It provides usable results, but there are better alternatives amongst the tested detectors.
+Below is the performance analysis of the SHT-based detector.
+
+\begin{figure}[t]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_rec_unrec_count.png}
 	\caption{Recognised and unrecognised quads with respect to quad size, using the SHT method}
@@ -865,7 +872,16 @@ Only the angle of the line is important.
 	\caption{Relative coordinate error with respect to quad size, using the SHT method}
 	\label{fig:shtRelCoordErr}
 \end{figure}
+Figure \figref{shtRecCnt} shows the recognition statistics of the detector.
+It needs much larger quads to work, compared to the other detectors.
+This is partly caused by the SHT's need to have a comparatively large number of inliers supporting a line to detect it.
+For small quads, some line segments can be simply shorter than what is detectable by the algorithm.
+Or false line can be detected, which also makes the quad reconstruction impossible.
 
+The Hough transform has tunable parameters, which greatly affect what features can be found.
+However, there is no formula to determine the values of these optimally based on the image parameters, so some heuristics are necessary to guess them.
+The detection rate could possibly be optimised by tweaking that heuristics, but it is outside the scope of this project.
+For now, it is accepted as a limitation that the SHT-based quad detector provides useful information above the $0.2$ quad size.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_base_length_error.png}
@@ -873,6 +889,11 @@ Only the angle of the line is important.
 	\label{fig:shtRelBaseErr}
 \end{figure}
 
+Figure \figref{shtRelCoordErr} shows the average relative coordinate error of the algorithm.
+It is much larger than that of the LSD quad detector.
+The error never goes below $15\%$, not even for large quads.
+As stated above, the detector in it's current state is not recommended to be used on quads with a scale factor less than $0.2$.
+At that scale, the coordinate error is $20\%$, which makes it's usefulness even more questionable.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_multiplier_error.png}
@@ -880,6 +901,13 @@ Only the angle of the line is important.
 	\label{fig:shtRelMulErr}
 \end{figure}
 
+The error is distributed almost evenly between the quad parameters.
+The base length and the multipliers have on average $15\%$ relative error in their optimal ranges.
+The angle error shows a somewhat better picture, with it's $10\%$ minimal error.
+The deviation is around $20\%$ for all of them.
+The orientation is also the most accurately measurable parameter with this algorithm.
+As figure \figref{shtRelOrientErr} shows, the relative error of the orientation stays below $10\%$ for the entire length range.
+It's minimum is $2\%$, with $10\%$ deviation.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_angle_error.png}
@@ -887,6 +915,10 @@ Only the angle of the line is important.
 	\label{fig:shtRelAngleErr}
 \end{figure}
 
+There are many possibilities to further develop and refine this algorithm to provide much better results.
+For example, the gradient information could be used to better detect lines, or a Least Squares approximation could be used to fit a line to the pixels marked as inliers to the line.
+However, all this is true for the algorithm which uses the probabilistic Hough transform, which much better results.
+Thus, further development of this algorithm is not recommended, nor will it be used further in the project.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_orientation_error.png}
