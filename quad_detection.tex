@@ -744,7 +744,7 @@ A distance in that 6-dimensional space can be defined, see \eqref{errQuadSpaceDi
 	E_{sum} = \sqrt{\sum_{p \in P^o, q \in P^d} (p - q)^2}
 	\label{eq:errQuadSpaceDist}
 \end{equation}
-This gives useful information about the absolute magnitude of error in the parametric wuad representation.
+This gives useful information about the absolute magnitude of error in the parametric quad representation.
 Of course, the relative version of the above error measure can also be defined.
 % distance in parameter space, relative
 \begin{equation}
@@ -768,48 +768,82 @@ Currently this aspect of the marker is not implemented, it can be a subject of f
 \subsection{LSD Quad Detector results}
 %-----------------------------------------------------------------------------------------------
 
-In this section the performance of the Line Segment Detector-based quad detection method will be evaluated.
-
-\begin{figure}[ht]
+\begin{figure}[t]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_rec_unrec_count.png}
 	\caption{Recognised and unrecognised quads with respect to quad size, using the LSD method}
-	\label{fig:lsdResRecCnt}
+	\label{fig:lsdRecCnt}
 \end{figure}
-
-\begin{figure}[ht]
+In this section the performance of the Line Segment Detector-based quad detection method will be evaluated.
+Figure \figref{lsdRecCnt} shows the recognition count of the LSD quad detector.
+Recognition fail is reported by the test framework if the detector couldn't find a quad on the input image or the average relative error is greater than $100\%$.
+Detection failure can be caused by a couple of reasons within the algorithm.
+If the quad on the image is too small, less than 3 lines may be detected.
+The detector is helpless in this case, no quad is returned.
+Another failure cause is connected to the small quads.
+If the necessary number of line segments are detected, it is still possible for the detection to fail.
+It can happen because a small quad rendered in comparatively low resolution looks more like a blob than connected line segments, thus the detected segments are not necessarily correspond to the segments of a quad.
+These effects combined explain the rising edge in the beginning of the detected quad count on figure \figref{lsdRecCnt}.
+\begin{figure}[t]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_coordinate_error.png}
 	\caption{Relative coordinate error with respect to quad size, using the LSD method}
-	\label{fig:lsdResCoordErr}
+	\label{fig:lsdRelCoordErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_base_length_error.png}
 	\caption{Relative base length error with respect to quad size, using the LSD method}
-	\label{fig:lsdResBaseErr}
+	\label{fig:lsdRelBaseErr}
 \end{figure}
+The sudden increase in the unrecognised count in the region of larger quads can be caused by a combination of two effects.
+The quad rendering process is designed in a way that larger quads are rendered with thicker lines than the small ones.
+This can cause issues with the merging of the two edges into one line.
+The detector algorithm can be improved to better handle this.
+The other part is that the LSD algorithm is sensitive to the scale of the features compared to the image size.
+Detection can be improved if the algorithm is re-run on a down-sampled image.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_multiplier_error.png}
 	\caption{Relative multiplier error with respect to quad size, using the LSD method}
-	\label{fig:lsdResMulErr}
+	\label{fig:lsdRelMulErr}
 \end{figure}
+The overall performance of the LSD quad detector is quite good.
+Figure \figref{lsdRelCoordErr} shows the average relative coordinate error and it's deviation as a function of the quad size.
+This figure can be used as an indicator of the general performance the algorithm.
+The relative coordinate error is below $5\%$ before the 0.1 scale factor is reached.
+This means that the algorithm can detect quite small features relatively accurately.
+In the optimal case, the average error is below $1\%$.
+As the figure shows, the deviation of the error is also small, which indicates that the detection is stable.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_angle_error.png}
 	\caption{Relative angle error with respect to quad size, using the LSD method}
-	\label{fig:lsdResAngleErr}
+	\label{fig:lsdRelAngleErr}
 \end{figure}
+The rest of the quad parameters show roughly the same level of accuracy.
+The angle error (figure \figref{lsdRelAngleErr}) and the multiplier error (figure \figref{lsdRelMulErr}) stay below $5\%$ for most of the usable size range.
 
+The error in the detected coordinates, base length, and multipliers show a small increase toward the region of larger quads.
+This is caused by the same effect as causes the increase in recognition failure.
+However, the angle parameters are not affected by this issue.
+This is not unexpected, as the angle between lines is left unchanged by the offset caused by the line width. 
+
+Another interesting observation can be made about the error distribution.
+Figure \figref{lsdRelBaseErr} and \figref{lsdRelOrientErr} show a significantly smaller error level than the others.
+Both the base length and the orientation only depends on the detection of the quad base, which is usually the largest feature of a quad.
+This results in a more accurate detection, as more inliers are available for precise line detection.
+The orientation is the most accurately detectable quad parameter. 
+On top of it depending only on the quad base, it is unaffected by the error in the detection of the base length.
+Only the angle of the line is important.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_orientation_error.png}
 	\caption{Relative orientation error with respect to quad size, using the LSD method}
-	\label{fig:lsdResOrientErr}
+	\label{fig:lsdRelOrientErr}
 \end{figure}
 
 \clearpage
@@ -822,42 +856,42 @@ In this section the performance of the Line Segment Detector-based quad detectio
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_rec_unrec_count.png}
 	\caption{Recognised and unrecognised quads with respect to quad size, using the SHT method}
-	\label{fig:shtResRecCnt}
+	\label{fig:shtRecCnt}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_coordinate_error.png}
 	\caption{Relative coordinate error with respect to quad size, using the SHT method}
-	\label{fig:shtResCoordErr}
+	\label{fig:shtRelCoordErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_base_length_error.png}
 	\caption{Relative base length error with respect to quad size, using the SHT method}
-	\label{fig:shtResBaseErr}
+	\label{fig:shtRelBaseErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_multiplier_error.png}
 	\caption{Relative multiplier error with respect to quad size, using the SHT method}
-	\label{fig:shtResMulErr}
+	\label{fig:shtRelMulErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_angle_error.png}
 	\caption{Relative angle error with respect to quad size, using the SHT method}
-	\label{fig:shtResAngleErr}
+	\label{fig:shtRelAngleErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/sht_relative_orientation_error.png}
 	\caption{Relative orientation error with respect to quad size, using the SHT method}
-	\label{fig:shtResOrientErr}
+	\label{fig:shtRelOrientErr}
 \end{figure}
 
 \clearpage
@@ -870,21 +904,21 @@ In this section the performance of the Line Segment Detector-based quad detectio
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/pht_rec_unrec_count.png}
 	\caption{Recognised and unrecognised quads with respect to quad size, using the PHT method}
-	\label{fig:phtResRecCnt}
+	\label{fig:phtRecCnt}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_coordinate_error.png}
 	\caption{Relative coordinate error with respect to quad size, using the PHT method}
-	\label{fig:phtResCoordErr}
+	\label{fig:phtRelCoordErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_base_length_error.png}
 	\caption{Relative base length error with respect to quad size, using the PHT method}
-	\label{fig:phtResBaseErr}
+	\label{fig:phtRelBaseErr}
 \end{figure}
 
 
@@ -892,21 +926,21 @@ In this section the performance of the Line Segment Detector-based quad detectio
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_multiplier_error.png}
 	\caption{Relative multiplier error with respect to quad size, using the PHT method}
-	\label{fig:phtResMulErr}
+	\label{fig:phtRelMulErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_angle_error.png}
 	\caption{Relative angle error with respect to quad size, using the PHT method}
-	\label{fig:phtResAngleErr}
+	\label{fig:phtRelAngleErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/pht_relative_orientation_error.png}
 	\caption{Relative orientation error with respect to quad size, using the PHT method}
-	\label{fig:phtResOrientErr}
+	\label{fig:phtRelOrientErr}
 \end{figure}
 
 \clearpage
@@ -919,42 +953,42 @@ In this section the performance of the Line Segment Detector-based quad detectio
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_rec_unrec_count.png}
 	\caption{Recognised and unrecognised quads with respect to quad size, using the Corner method}
-	\label{fig:cornerResRecCnt}
+	\label{fig:cornerRecCnt}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_coordinate_error.png}
 	\caption{Relative coordinate error with respect to quad size, using the Corner method}
-	\label{fig:cornerResCoordErr}
+	\label{fig:cornerRelCoordErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_base_length_error.png}
 	\caption{Relative base length error with respect to quad size, using the Corner method}
-	\label{fig:cornerResBaseErr}
+	\label{fig:cornerRelBaseErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_multiplier_error.png}
 	\caption{Relative multiplier error with respect to quad size, using the Corner method}
-	\label{fig:cornerResMulErr}
+	\label{fig:cornerRelMulErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_angle_error.png}
 	\caption{Relative angle error with respect to quad size, using the Corner method}
-	\label{fig:cornerResAngleErr}
+	\label{fig:cornerRelAngleErr}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_orientation_error.png}
 	\caption{Relative orientation error with respect to quad size, using the Corner method}
-	\label{fig:cornerResOrientErr}
+	\label{fig:cornerRelOrientErr}
 \end{figure}
 
 \clearpage
