@@ -1008,20 +1008,37 @@ Incorporating the image gradient information in the transform would also signifi
 \subsection{Corner Quad Detector results}
 %-----------------------------------------------------------------------------------------------
 
+The final quad detection method, contrary to the so far analysed ones, uses corner detection.
+It shares the issue of tunable parameters with the Hough transformation based methods.
+Below is the performance evaluation of the corner detection based quad detector.
+
+As with the rest of the detectors, this one is a prototype, too.
+This means there are multiple ways to improve it, but it is suitable for some preliminary experiments.
+
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_rec_unrec_count.png}
 	\caption{Recognised and unrecognised quads with respect to quad size, using the Corner method}
 	\label{fig:cornerRecCnt}
 \end{figure}
-
+Figure \figref{cornerRecCnt} shows the detection statistics of the detector.
+Aside the really small quads, this method has potential to detect with remarkably good ratio.
+There are 2 regions where almost all quads were detected.
+However, in the middle size range, about $10\%$ of the quads were lost.
+This is due to the rendering process and the lack of optimisation in the detection algorithm.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_coordinate_error.png}
 	\caption{Relative coordinate error with respect to quad size, using the Corner method}
 	\label{fig:cornerRelCoordErr}
 \end{figure}
+The parameters of the corner detector also need tuning to detect features on different scales.
+In the middle region, the corners simply were too "round" to be detected.
+This can be avoided with scaling of the image, or tweaking the detector parameters.
 
+The same scaling issue can be observed on the error graphs as well.
+These will not be considered in the error analysis, as they could be eliminated.
+Only the optimal size range will be analysed.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_base_length_error.png}
@@ -1029,6 +1046,10 @@ Incorporating the image gradient information in the transform would also signifi
 	\label{fig:cornerRelBaseErr}
 \end{figure}
 
+The error in the corner positions is shown in figure \figref{cornerRelCoordErr}.
+The magnitude is quite large, comparable to the one produced by the SHT-based method.
+The reason for this is that the corner detector finds the outer, inner, or both corners os the \textit{edge} of the line, which can be quite far from the centre, depending on the quad angle and the viewpoint.
+This could be somewhat compensated by using a skeleton, but finding an optimal algorithm for it is problematic.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_multiplier_error.png}
@@ -1036,6 +1057,11 @@ Incorporating the image gradient information in the transform would also signifi
 	\label{fig:cornerRelMulErr}
 \end{figure}
 
+The error of the base length detection is within reasonable limits, but it is far from being outstanding.
+In it's optimal region, a $5\%$ error was achieved.
+The orientation is also detected accurately enough.
+The multipliers and the angle parameters on the other hand, carry quite a lot of error.
+Their $30\%$ average value is far from usable, and is outperformed by the other algorithms.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_angle_error.png}
@@ -1043,6 +1069,9 @@ Incorporating the image gradient information in the transform would also signifi
 	\label{fig:cornerRelAngleErr}
 \end{figure}
 
+Based on these results, the application of corner detection is discouraged for this purpose.
+As for the other algorithms, there are plenty opportunities for improvement, but the other solutions offer better performance overall.
+Line segment detection seems a more intuitive solution for this problem, and, as expected, produced better results.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/corner_relative_orientation_error.png}
