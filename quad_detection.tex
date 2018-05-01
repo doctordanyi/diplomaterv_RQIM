@@ -495,28 +495,136 @@ The Shi-Tomasi measure, while being simpler and requiring less computational pow
 %-----------------------------------------------------------------------------------------------
 
 %-----------------------------------------------------------------------------------------------
-\subsection{Conditioning}
-%-----------------------------------------------------------------------------------------------
-
-Before running the line detection algorithms some conditioning steps are done in order to improve their effectiveness.
-These processes are not uniform - every fitting method needs it's own.
-
-The Hough transformation traditionally works best on thin lines.
-The easiest way is to generate an edge image with high-pass filtering.
-The OpenCV framework offers a wide variety of features for this task.
-The best result are obtained by using the Canny edge detector.
-
-The skeletoning detector does not need a conditioning step, as it performs the band thinning on it's own.
-
-The methods based on image gradients and corner detection both require some level of smoothing on the picture.
-In case of the corner detection the smoothing is useful for removing the false positive matches caused by the jagged edges, or in case os JPEG images the artefacts caused by the compression.
-The gradient detector simply gives a more spread-out and easier to analyse result on a smoothly changing gradient than it would on strict edge.
-The smoothing is also implemented using the OpenCV framework, which provides easy access to Gaussian filtering.
-The OpenCV implementation is based on convolution with a configurable Gaussian kernel.
-The kernel size and the deviation in $x$ and $y$ direction can be set.
-The Gaussian kernel and the convolution itself is handled in the framework.
-
-%-----------------------------------------------------------------------------------------------
 \subsection{LSD Quad Detector}
 %-----------------------------------------------------------------------------------------------
+\begin{lstlisting}
+detect_quad(img):
+  img = prepare_image(img)
+  lines, widths, prec, nfa = LSD_detector.detect(img)
+	
+  # Both edges of some line segment found
+  if count(lines) > 3:
+    pairs = find_pairs(lines)
+    lines_merged = merge_pairs(pairs)
+  elif count(lines) == 3:
+    lines_merged = lines
+  # Detection failed
+  else:
+    return None
+	
+  corners, result = find_corners(lines_merged)
+  if result == (BaseNotFound or IntersectionNotFound):
+    # detection fail
+    return None
+	
+  return Quad(scale_to_quad_space(corners))
+\end{lstlisting}
 
+%-----------------------------------------------------------------------------------------------
+\subsection{Hough-based Quad Detectors}
+%-----------------------------------------------------------------------------------------------
+
+\begin{lstlisting}
+def detect_quad(img):
+  img = prepare_image(img)
+	
+  line_segments, result = find_segments(img)
+  if result == NoLinesDetected:
+    # Detection fail
+    return None
+	
+  if count(line_segments) < 3:
+    # Detection fail
+    return None
+	
+  corners, result = find_corners(line_segments)
+  if result == (BaseNotFound or IntersectionNotFound):
+    # Detection fail
+    return None
+	
+  return Quad(scale_to_quad_space(corners))	
+\end{lstlisting}
+
+%-----------------------------------------------------------------------------------------------
+\subsubsection{SHT Quad Detector}
+%-----------------------------------------------------------------------------------------------
+
+\begin{lstlisting}
+find_lines(img):
+  thresh = get_threshold(img)
+  skeleton = do_skeletoning(img)
+	
+  lines = HoughLines(skeleton, 1, pi / 180, thresh)
+  if lines is None or count(lines) < 3:
+    return NoLinesDetected
+
+  if count(lines) > 3:
+    lines = kmeans(lines, number_of_clusters=3)
+	
+  return lines
+\end{lstlisting}
+
+\begin{lstlisting}
+find_segments(img):
+  lines, result = find_lines(img)
+  if result == NoLinesDetected:
+    # Detection failed
+    return result
+	
+  max_line_gap = min(bounding_box_size) / 2
+  segments = empty_list
+  for rho, theta in lines:
+    line_points = get_line_points(rho, theta, img)
+    segments.append(get_line_segment(line_points, max_line_gap)
+	
+  return segments
+\end{lstlisting}
+
+%-----------------------------------------------------------------------------------------------
+\subsubsection{PHT Quad Detector}
+%-----------------------------------------------------------------------------------------------
+
+\begin{lstlisting}
+find_segments(img):
+  thresh = get_threshold(img)
+  in_line_length = min(bounding_box_size) / 4
+
+  lines = HoughLinesP(img, 1, np.pi / 180, thresh, 
+                      minLineLength=min_line_length, 
+                      maxLineGap=min_line_length/2)
+  if lines is None or count(lines) < 3:
+    return NoLinesDetected
+
+  if count(line_segments) > 3:
+    line_segments = merge_segments(line_segments)
+				
+  return line_segments
+\end{lstlisting}
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Corner Quad Detector}
+%-----------------------------------------------------------------------------------------------
+
+\begin{lstlisting}
+detect_quad(img):
+  img = prepare_image(img)
+  corners = get_corners(gray, max_corner_count=6, 
+                              quality_level=0.1, 
+                              min_distance=2, 
+                              methotd=shi_tomasi)
+	
+  if count(corners) < 4:
+    # Detection failed
+    return None
+	
+  if count(corners) > 4:
+    corners = merge_corners(corners)
+	 
+  inner, outer, result = identify_points(corners)
+  if result == (BaseNotFound or TypeError):
+    # Detection failed
+    return None
+	
+  corners = [outer[0], inner[0], inner[1], outer[1]]	
+  return Quad(scale_to_quad_space(corners))
+\end{lstlisting}
