@@ -494,9 +494,23 @@ The Shi-Tomasi measure, while being simpler and requiring less computational pow
 \section{Application for Quad Detection}
 %-----------------------------------------------------------------------------------------------
 
+% common interface
+% implemetation
+%class hierarchy
+%python implementation of the detectors in appendix
+
 %-----------------------------------------------------------------------------------------------
 \subsection{LSD Quad Detector}
 %-----------------------------------------------------------------------------------------------
+
+This quad detection method is built around the LSD algorithm.
+The OpenCV implementation is used, which provides additional improvements around the algorithm described in the theoretical overview.
+Namely, the scale dependence is handled within OpenCV.
+It is done by generating a Gaussian pyramid from the input image, with $N-1$ down-sampling and $N$ Gaussian blurring, resulting in $N$ layers (one for each octave).
+The above described LSD algorithm is then ran on each layer to detect lines of multiple scales.
+
+That being said, not much additional logic was necessary to build a quad detection solution.
+The detection routine is summed up in the listing below.
 \begin{lstlisting}
 detect_quad(img):
   img = prepare_image(img)
@@ -504,8 +518,8 @@ detect_quad(img):
 	
   # Both edges of some line segment found
   if count(lines) > 3:
-    pairs = find_pairs(lines)
-    lines_merged = merge_pairs(pairs)
+    pairs = find_pairs(lines, widths)
+    lines_merged = merge_pairs(pairs, widths)
   elif count(lines) == 3:
     lines_merged = lines
   # Detection failed
@@ -520,12 +534,46 @@ detect_quad(img):
   return Quad(scale_to_quad_space(corners))
 \end{lstlisting}
 
+This line detection algorithm requires very little preprocessing.
+The only necessary step is converting the 3 channel input image to grayscale.
+Noise filtering is not needed as it is "built in" to the underlying algorithms.
+First, the Gaussian down-sampling provides a quite efficient protection against white noise, jagged image edges or JPEG artefacts.
+Furthermore, the \textit{a-contrario} validation of the LSD algorithm also provides efficient noise suppression.
+
+It is possible that the LSD detects both edges of a line.
+In that case, they need to be merged.
+This is done by looking for almost parallel lines which are close together.
+The merged line segments are calculated by selecting the longer one of the two parallel segments.
+Then it is offset by half of the width of the detected line.
+The LSD algorithm is sensitive to the gradient direction, so the direction of the offset can be calculated.
+
+After the duplicates have been dealt with, the corner coordinates of the quad need to be found.
+In order to do this, the quad base has to be identified.
+The identification begins with creating every possible combination of the three line segments.
+Then the distance of the line segments is calculated for each pair.
+The pair with the maximum distance contains the the quad \textit{arms}, and the remaining segment is the \textit{base}.
+The inner quad corner coordinates are found by calculating the intersection of each \textbf{line} representing an \textins{arm} with the one \textbf{line} representing the \textit{base}.
+The outer corners (the end of the arms not connecting to the base) are simply the endpoints of each arm \textbf{line segment} further from the base.
+This corner detection method is shared by all quad detectors using some kind of line detection.
+
+Finally the corner coordinates are normed by the image size.
+This is done in order to store the quad parameters in a way that does not depend on the image size.
+
 %-----------------------------------------------------------------------------------------------
 \subsection{Hough-based Quad Detectors}
 %-----------------------------------------------------------------------------------------------
 
+There are two quad detectors based on variants of the well known Hough-transform.
+One is based on the Standard Hough-transform, the other is based on the PPHT.
+Both versions of the transforms were covered in the theoretical overview.
+The two detectors share many implementation details, so the common parts will be discussed first.
+The different aspects will be covered separately.
+
+The general flow of the Hough-based detection algorithms is given by the following pseudo-code.
+The different underlying line detection methods are hidden behind the \textit{find\_segments} function.
+The separate implementations will be discussed later.
 \begin{lstlisting}
-def detect_quad(img):
+detect_quad(img):
   img = prepare_image(img)
 	
   line_segments, result = find_segments(img)
@@ -545,15 +593,35 @@ def detect_quad(img):
   return Quad(scale_to_quad_space(corners))	
 \end{lstlisting}
 
+The detection process starts by preparing the input image for the Hough-transform.
+This involves two steps.
+First the image is converted to binary by applying a threshold to it.
+From the binary image the skeleton of the feature is extracted.
+For this a simple algorithm is used, based on morphological operations.
+
+The line detection is carried out on the skeleton image.
+The detectors return the detected line segments.
+Then the corner extraction described with the LSD based detector is applied.
+
+After this overview of the general detection algorithm, the specialised cases of the standard and probabilistic Hough transform will be described.
+
 %-----------------------------------------------------------------------------------------------
 \subsubsection{SHT Quad Detector}
 %-----------------------------------------------------------------------------------------------
 
+The Hough transform is used in the line segment detection step.
+It's implementation is provided by the OpenCV framework, but there are some supporting logic to get useful output from the detected lines.
+The OpenCV function \textit{HoughLines} returns lines, represented by the \textit{Rho-Theta} parameters described in the theoretical overview.
+It is not an easy task produce only the wanted lines with the classical Hough transforms.
+Based on the above points, the supporting logic has to do two things.
+First, the relevant lines need to be selected, then the endpoints of the lines have to be determined.
+
+The line extraction routine is described in pseudo-code below.
+The resolution of the accumulator was set to 1 pixel for \textit{rho} and $1^\circ$ for \textit{theta}.
+The threshold for detection is determined by the bounding box of the skeleton on the image, as it correlates with the length of lines expected to be found.
 \begin{lstlisting}
 find_lines(img):
   thresh = get_threshold(img)
-  skeleton = do_skeletoning(img)
-	
   lines = HoughLines(skeleton, 1, pi / 180, thresh)
   if lines is None or count(lines) < 3:
     return NoLinesDetected
@@ -563,7 +631,13 @@ find_lines(img):
 	
   return lines
 \end{lstlisting}
+The problem of more than 3 lines found is handled as follows.
+The lines returned by the transform are clustered by the k-means algorithm.
+The cluster centers returned by k-means each correspond to the average of one of the 3 dominant line groups.
 
+As for the creation of line segments from the lines, the following algorithm is used.
+First, the pixel from the original image touched by the given line are collected.
+Then, the longest continuous\footnote{that is, having a smaller gap than defined by the max\_line\_gap variable} range of non-zero pixels are marked as part of the line segment.
 \begin{lstlisting}
 find_segments(img):
   lines, result = find_lines(img)
@@ -579,15 +653,22 @@ find_segments(img):
 	
   return segments
 \end{lstlisting}
+The two ends of the region os the so marked pixels represent the endpoints of the line segment.
+Then a list of the found line segments is returned.
 
 %-----------------------------------------------------------------------------------------------
 \subsubsection{PHT Quad Detector}
 %-----------------------------------------------------------------------------------------------
 
+The probabilistic Hough transform implementation is also provided by the OpenCV framework.
+It requires additional parameters, as it handles the line to line segment conversion internally.
+
+The PHT-based implementation of \textit{find\_segment} is described by the following pseudo-code.
+The threshold for detection is calculated from the feature bounding box similarly to the SHT-based detector, the only differenc is a scale factor.
 \begin{lstlisting}
 find_segments(img):
   thresh = get_threshold(img)
-  in_line_length = min(bounding_box_size) / 4
+  min_line_length = min(bounding_box_size) / 4
 
   lines = HoughLinesP(img, 1, np.pi / 180, thresh, 
                       minLineLength=min_line_length, 
@@ -600,11 +681,24 @@ find_segments(img):
 				
   return line_segments
 \end{lstlisting}
+For the minimal required line length a simple heuristic is given, also based on the bounding box.
+
+This detection method also suffers from the problem of more than necessary lines detected.
+It is solved by merging the line segments having similar slope.
+The detected line segments are returned to the common part of the code for quad corner calculation.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{Corner Quad Detector}
 %-----------------------------------------------------------------------------------------------
 
+The corner detection based algorithm is fundamentally different than it's line detection based alternatives.
+It is also simpler, as there is no line segment to corners conversion.
+This detection method also has 2 variants depending on which corner measure they use.
+However, this is handled inside OpenCV, so the variants differ only in a passed parameter.
+
+The detection method overview is shown below.
+The image preprocessing involves only a conversion to grayscale.
+This could be improved, but for the preliminary testing it wasn't necessary, as optimally generated images were used.
 \begin{lstlisting}
 detect_quad(img):
   img = prepare_image(img)
@@ -628,3 +722,22 @@ detect_quad(img):
   corners = [outer[0], inner[0], inner[1], outer[1]]	
   return Quad(scale_to_quad_space(corners))
 \end{lstlisting}
+
+The corner detection function was provided by OpenCV.
+As mentioned above, the scoring function can be set to either Harris or Shi-Tomasi.
+Both were tried, but there was no noticeable difference in the quality of detection.
+Thus, the Shi-Tomasi method is used, as it is more efficient computationally.
+The maximum number of corners to detect was seto to 6: the 2 endpoints of the arms, and the inner and outer corners of the intersection of base and arms.
+
+The usual error handling is also present here: if less than 4 corners are detected, detection failure is reported.
+If more (up to 6) corners ar detected, corner merging is done.
+This is necessary if both the inner and the outer corner of the base-arm intersection is detected.
+Those are merged together to their average.
+For now, always the 2 closest points are merged.
+
+In order to create a quad, the corner points have to be identified as an inner (base-arm intersection) or outer (arm end) points.
+To do this, the connectivity of the point pairs is examined.
+The points with 2 neighbours are classified as inner points, the ones having only one neighbour are the outer points.
+
+When this classification is done, the detection process is finished.
+A quad is created from the scaled corner points.
