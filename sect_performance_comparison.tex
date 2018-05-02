@@ -2,6 +2,27 @@
 \section{Performance comparison}
 %-----------------------------------------------------------------------------------------------
 
+The major part of this work is dedicated to selecting the most suitable algorithm for measuring quad parameters.
+So far the theory of the underlying algorithms and the minimum viable implementations of detectors based on them have been discussed.
+In order to select the best candidate some kind of benchmarking solution is needed.
+Defining a scoring function to be used as a base for comparison was a task to be solved.
+Also, to draw any meaningful conclusion a significantly large number of test need to be run.
+
+To address these tasks, a test framework was developed.
+Similarly to the detectors themselves, it was also done in python.
+The software handles the whole benchmarking process.
+It generates quads for test data, renders them to images, runs the detection routines, plots the test result, etc...
+This test framework is described with the necessary level of detail in this section.
+
+It was also a non-trivial decision to select a scoring function for the comparison.
+Below will be a summary of the tried and used error functions.
+The reasons for their consideration as well as their definitions will be explained.
+
+The last, major part of this section will be the discussion of the test results.
+Each algorithm will have a thorough analysis about it's strengths and weaknesses, and of their error distribution.
+Finally, the summary of the results will be published, comparing the results of the detectors.
+A recommended quad detection method will be selected.
+
 %-----------------------------------------------------------------------------------------------
 \subsection{Test method}
 %-----------------------------------------------------------------------------------------------
@@ -16,7 +37,7 @@ In this section will be a description of the testing method used in this project
 
 As a first step, a data source is necessary for the algorithms under test.
 For this, randomly generated quads were used.
-The random generator was constructed in a way that allowed some control over the generated data: the \textit{wuad size} and the range of the other parameters could be set.
+The random generator was constructed in a way that allowed some control over the generated data: the \textit{quad size} and the range of the other parameters could be set.
 To provide data for extensive testing, a large data set was generated.
 Every algorithm received random quads with sizes ranging from $1\%$ to $75\%$ of the image size, in $1\%$ increments.
 From each size 1000 quads were generated and provided to the detectors.
