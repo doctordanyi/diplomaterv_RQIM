@@ -494,10 +494,28 @@ The Shi-Tomasi measure, while being simpler and requiring less computational pow
 \section{Application for Quad Detection}
 %-----------------------------------------------------------------------------------------------
 
-% common interface
-% implemetation
-%class hierarchy
-%python implementation of the detectors in appendix
+In this section the practical application of the previously explained algorithms will be presented.
+The detection methods described in the above section provide solutions for detecting geometric primitives.
+Some additional processing is required to use them for identifying quads on an image and measuring their parameters.
+The details of the additional logic differ from algorithm to algorithm.
+The preprocessing steps, the conversion of geometric primitives to quads and the various other necessary tasks will be explained below.
+For the sake of simplicity, the steps of quad detection will be shown using a pseudo-code notation.
+
+The experimental part of this work was done in python.
+The quad detector prototypes and the test framework was developed using the language.
+This greatly influenced the design of the framework used for testing: object oriented design principles were followed.
+The quad detection routines were encapsulated in \textit{quad detectors}, which in turn are represented as instances of a \textit{QuadDetector} class.
+Each detection method had it's own class, derived from the common ancestor.
+The implementation details of the classes will not be described in depth, as they are only part of the test framework.
+Only the parts necessary to understand the test method will be shown.
+
+Each implemented detector had, as a public interface, a function called \textit{detect\_quad(img)}, which required an image containing a single quad.
+The test framework operated on this simple interface.
+The pseudo-code blocks of the following subsections will show how each detection method implemented this interface function.
+
+As mentioned above, the exact python implementations will not be discussed.
+They are far from optimal and there is lots of room for improvement.
+However, in order to be complete, they are published in the appendix.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{LSD Quad Detector}
@@ -737,6 +755,7 @@ For now, always the 2 closest points are merged.
 
 In order to create a quad, the corner points have to be identified as an inner (base-arm intersection) or outer (arm end) points.
 To do this, the connectivity of the point pairs is examined.
+The connectivity check is done by counting the non-zero pixels along the line segment between the two selected corner point.
 The points with 2 neighbours are classified as inner points, the ones having only one neighbour are the outer points.
 
 When this classification is done, the detection process is finished.
