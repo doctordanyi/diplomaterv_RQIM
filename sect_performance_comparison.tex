@@ -20,8 +20,8 @@ The reasons for their consideration as well as their definitions will be explain
 
 The last, major part of this section will be the discussion of the test results.
 Each algorithm will have a thorough analysis about it's strengths and weaknesses, and of their error distribution.
-Finally, the summary of the results will be published, comparing the results of the detectors.
-A recommended quad detection method will be selected.
+Finally, the summary of the results will be published, comparing the performance of the detectors.
+Based on those results, an algorithm will be chosen as recommended for use.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{Test method}
@@ -280,15 +280,15 @@ Detection failure can be caused by a couple of reasons within the algorithm.
 If the quad on the image is too small, less than 3 lines may be detected.
 The detector is helpless in this case, no quad is returned.
 Another failure cause is connected to the small quads.
-If the necessary number of line segments are detected, it is still possible for the detection to fail.
-It can happen because a small quad rendered in comparatively low resolution looks more like a blob than connected line segments, thus the detected segments are not necessarily correspond to the segments of a quad.
-These effects combined explain the rising edge in the beginning of the detected quad count on figure \figref{lsdRecCnt}.
-\begin{figure}[t]
+\begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/lsd_relative_coordinate_error.png}
 	\caption{Relative coordinate error with respect to quad size, using the LSD method}
 	\label{fig:lsdRelCoordErr}
 \end{figure}
+If the necessary number of line segments are detected, it is still possible for the detection to fail.
+It can happen because a small quad rendered in comparatively low resolution looks more like a blob than connected line segments, thus the detected segments are not necessarily correspond to the segments of a quad.
+These effects combined explain the rising edge in the beginning of the detected quad count on figure \figref{lsdRecCnt}.
 
 \begin{figure}[ht]
 	\centering
@@ -348,10 +348,9 @@ Only the angle of the line is important.
 Although the runtime of the algorithms was not measured during the experiments, the LSD method was noticeably faster than the others.
 For any meaningful statistics on runtime, an equally well optimised, preferably C++ implementation of the algorithms would be necessary.
 This was not in the scope of this project.
-\clearpage
 
 %-----------------------------------------------------------------------------------------------
-\subsection{SHT Quad Detector results}
+\clearpage\subsection{SHT Quad Detector results}
 %-----------------------------------------------------------------------------------------------
 
 This quad detection method is built around the Standard Hough Transform, with all of it's well known benefits and drawbacks.
@@ -425,10 +424,8 @@ Thus, further development of this algorithm is not recommended, nor will it be u
 	\label{fig:shtRelOrientErr}
 \end{figure}
 
-\clearpage
-
 %-----------------------------------------------------------------------------------------------
-\subsection{PHT Quad Detector results}
+\clearpage\subsection{PHT Quad Detector results}
 %-----------------------------------------------------------------------------------------------
 
 In this section the performance of the probabilistic Hough transform-based quad detector will be evaluated.
@@ -501,10 +498,8 @@ Incorporating the image gradient information in the transform would also signifi
 	\label{fig:phtRelOrientErr}
 \end{figure}
 
-\clearpage
-
 %-----------------------------------------------------------------------------------------------
-\subsection{Corner Quad Detector results}
+\clearpage\subsection{Corner Quad Detector results}
 %-----------------------------------------------------------------------------------------------
 
 The final quad detection method, contrary to the so far analysed ones, uses corner detection.
@@ -578,8 +573,32 @@ Line segment detection seems a more intuitive solution for this problem, and, as
 	\label{fig:cornerRelOrientErr}
 \end{figure}
 
-\clearpage
-
 %-----------------------------------------------------------------------------------------------
 \subsection{Summary}
 %-----------------------------------------------------------------------------------------------
+
+So far the performance of the quad detectors have been evaluated individually.
+Now they will be compared against each other in order to select the most suitable one.
+In this overall comparison the error distribution will not regarded, only the detection accuracy will be checked.
+For this purpose the relative average coordinate error (defined by \eqref{errRelAvgCoord}) and the relative distance in the parameter space (defined by \eqref{errQuadSpaceDistRel}) will be used.
+
+Figure \figref{detCmpQSpace} shows a summary of detector performance based on distance in the parameter space.
+As already mentioned, the corner detection based method is not recommended.
+It has the greatest error magnitude out of the benchmarked algorithms.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/detector_comp_quad_param_space.png}
+	\caption{Detector comparison based on relative distance in parameter space}
+	\label{fig:detCmpQSpace}
+\end{figure}
+With error rates greater than $20\%$, the usability of the estimated pose is questionable at best.
+
+The second most error-prone detection method is the one based on the standard Hough transform.
+At it's peak performance it works within a $10\%$ error margin.
+Although much better than the corner detection based method, this level of accuracy is still not enough for robust pose estimation.
+In terms of computational efficiency, the SHT is more expensive than the PHT or LSD.
+As seen on the figure, the SHT also requires larger quads to provide acceptable error magnitude.
+
+The second most promising algorithm turned out to be the probabilistic Hough transform.
+It is a computationally efficient method which also provides reasonably accurate results.
+For larger quads it performs nearly as well as the LSD based algorithm.
