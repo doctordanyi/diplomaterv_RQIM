@@ -582,15 +582,15 @@ Now they will be compared against each other in order to select the most suitabl
 In this overall comparison the error distribution will not regarded, only the detection accuracy will be checked.
 For this purpose the relative average coordinate error (defined by \eqref{errRelAvgCoord}) and the relative distance in the parameter space (defined by \eqref{errQuadSpaceDistRel}) will be used.
 
-Figure \figref{detCmpQSpace} shows a summary of detector performance based on distance in the parameter space.
-As already mentioned, the corner detection based method is not recommended.
-It has the greatest error magnitude out of the benchmarked algorithms.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/plots/detector_comp_quad_param_space.png}
 	\caption{Detector comparison based on relative distance in parameter space}
 	\label{fig:detCmpQSpace}
 \end{figure}
+Figure \figref{detCmpQSpace} shows a summary of detector performance based on distance in the parameter space.
+As already mentioned, the corner detection based method is not recommended.
+It has the greatest error magnitude out of the benchmarked algorithms.
 With error rates greater than $20\%$, the usability of the estimated pose is questionable at best.
 
 The second most error-prone detection method is the one based on the standard Hough transform.
@@ -602,3 +602,25 @@ As seen on the figure, the SHT also requires larger quads to provide acceptable 
 The second most promising algorithm turned out to be the probabilistic Hough transform.
 It is a computationally efficient method which also provides reasonably accurate results.
 For larger quads it performs nearly as well as the LSD based algorithm.
+It may very well be possible to further refine the detection accuracy.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/plots/detector_comp_corner_error.png}
+	\caption{Detector comparison based on relative distance in parameter space}
+	\label{fig:detCmpCorner}
+\end{figure}
+The clear winner is the LSD-based quad detector.
+It clearly outperforms the other algorithms both in the parameter space distance and the relative corner error (figure \figref{detCmpCorner}).
+It works reasonably well for small quads, has error magnitude as low as $1\%$ and the line detection routine runs in linear time.
+Even if the PHT based detector comes close to it's accuracy, if the standard deviation of the error is also considered, the LSD is much more accurate.
+
+Based on the individual and comparative tests, the following results have been found.
+The corner detection based detector has too large error margins.
+Even though run times were not measured in this test, it was also slower than the others.
+The standard Hough transform based solution is somewhat better, and possibly could still be improved, but it is not recommended.
+The PHT based detector outperforms it in every aspect, and since they are based on the same algorithm, it is recommended to focus on the PHT based variant.
+It also performed well overall, with accuracy comparable to the LSD detector.
+The PHT detector is recommended for further study or improvement.
+The LSD detector proved to be the best in every situation examined in this experiment.
+Due to it's accuracy and robustness, and also computational efficiency\footnote{Although this was not measured, the LSD algorithm runs in linear time, and the additional logic does not add much complexity} it is recommended to use it for quad detection in the further parts of this project.
