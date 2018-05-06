@@ -226,22 +226,22 @@ lowlim = lower size limit
 uplim = upper size limit
 n = 0
 while n < n_max
-	size = exp(-rand() * f)
-	if size > lowlim and size < uplim
-		store size
-		n = n+1
-	endif
+    size = exp(-rand() * f)
+    if size > lowlim and size < uplim
+        store size
+        n = n+1
+    endif
 end
 sort(sizes, descending)
 n = 0
 while n < n_max
-	while quad placed or max tries
-		quad = create_random_quad(sizes(n))
-		if quad can be placed
-			place quad
-			n = n+1
-		end
-	end
+    while quad placed or max tries
+        quad = create_random_quad(sizes(n))
+        if quad can be placed
+            place quad
+            n = n+1
+        end
+    end
 end
 return marker
 \end{lstlisting}
