@@ -44,8 +44,8 @@ estimate_pose(img, original_marker):
     for quad_img in quad_imgs
         quad = detect_quad(quad_img)
         quads.append(quad)
-	pose = find_pose(quads, orignal_marker) 
-	return pose
+    pose = find_pose(quads, orignal_marker) 
+    return pose
 \end{lstlisting}
 The following sections will elaborate on each step of the process.
 The quad detection algorithms were already covered, their explanation can be found in the relevant chapter.
@@ -168,4 +168,35 @@ From then on, only the quad representations are used.
 %-----------------------------------------------------------------------------------------------
 \section{Pose Calculation}
 %-----------------------------------------------------------------------------------------------
+
+The last step of the algorithm is to actually calculate the pose from the detected quads.
+According to chapter \sectref{pose}, this is done by using the \textit{robust pose estimation from a planar target} algorithm.
+However, the association between the original and the detected quads is not known.
+The quad coordinates measured in the previous processing step are of the quads distorted by the projection.
+At first, this looks like a deadlock situation: the association of the quads is needed to calculate the camera pose, but without the pose the quads cannot be paired.
+
+To resolve the above issue, an iterative process is proposed.
+It is summarised by the following pseudo-code.
+The method is a variant of the Random Sample Consensus algorithm.
+It's core concept is that randomly selected quad pairs are tested, and the one having the highest number of inliers and least error level is accepted as a solution.
+\begin{lstlisting}
+find_pose(det_quads, orig_quads):
+    threshold = get_thresh(count(det_quads), count(orig_quads))
+    pairs = combinations(det_quads, orig_quads)
+    pairs.shuffle()
+    best_pose = none
+    best_error = inf
+    for det, orig in pairs:
+        pose = robust_planar_pose(det, orig)
+        matches = test_pose(pose, det_quads, orig_quads)
+        if count(matches) > threshold:
+            error = get_detection_error(matches)
+            if error < precision:
+                return pose
+            else if error < best_error:
+                best_pose = pose
+                best_error = error
+    return pose
+\end{lstlisting}
+
 
