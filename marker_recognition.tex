@@ -191,7 +191,7 @@ find_pose(det_quads, orig_quads):
         matches = test_pose(pose, det_quads, orig_quads)
         if count(matches) > threshold:
             error = get_detection_error(matches)
-            if error < precision:
+            if error < PRECISION:
                 return pose
             else if error < best_error:
                 best_pose = pose
@@ -199,4 +199,48 @@ find_pose(det_quads, orig_quads):
     return pose
 \end{lstlisting}
 
+The routine receives as input the quads detected on the image and the quads of the original marker.
+To find the association between them, first random pairs are made by choosing one quad from each input set.
+This can be achieved by first generating every possible two element combination of the two sets, storing them, then randomly selecting from that queue.
 
+The testing of a quad pair is done by accepting them as a hypothesis and pose based on them.
+The original quads are then reprojected using that pose.
+The algorithm then tries to identify the detected quads on the transformed original marker.
+This can be done by either checking the relative error of the quad corners, or their distance in the parameter space.
+If two quads are close to each other\footnote{Using of the error measures defined above}, they are accepted as matching.
+
+Multiple criteria have to met for pose to be accepted as the solution.
+First, the number matching quads found have be above a limit.
+This limit, or threshold, is calculated from the number of detected quads and the number of quads on the original marker.
+As a first approximation $60\%$ of the number of detected quads\footnote{or, in case there are fewer original than detected quads, $60\%$ of the number of original quads} is used.
+In case the pose has fewer supporting quads than the threshold, it is abandoned and a new quad pair is selected.
+If it passes the test, an error is associated with it.
+It is calculated similarly to the detection error in the previous chapters, but scoring the difference between the matched quads.
+As an optimisation, if the the error is less than a predetermined level, the pose is instantly accepted as a solution.
+Otherwise the testing is executed on all pairs and the pose with the smallest error magnitude is returned.
+
+With these steps the camera pose can be calculated and the detected quads are identified.
+This method is not optimal, as it is based on trial and error.
+On the other hand, due to it's similarity to RANSAC, it has quite good noise suppressing properties.
+The detected pose can further be refined if, after the successful pose identification, all quad pairs are passed to the pose estimation algorithm, thus providing more information about the viewpoint.
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Marker Recognition}
+%-----------------------------------------------------------------------------------------------
+
+Recognising an unknown marker was not a high priority target in this work.
+However, with some, but practically not very limiting restrictions a rudimentary marker recognition method can be built around the pose detecting algorithm.
+The above solution is based on knowing the marker that will be used for pose measurement.
+When detection is discussed, multiple markers are used.
+This can be accounted for if the algorithm has knowledge of all the possible markers.
+In practice, this limits the number of markers, as the storage and processing power require could make the method unusable.
+
+The principle is the same as for the single marker solution.
+Combinations are randomly tried and the one producing the least amount of error is accepted as valid.
+However, some optimisation is necessary, as the pose estimation is already an iterative, RANSAC-like algorithm.
+Instead of trying every possible detected and original quad combination for all known markers, only the largest detected quad is paired up with the quads of the original markers.
+This heuristic approach is chosen on the basis of on average larger quads having the least amount of detection error.
+
+Running through the pose testing algorithm for all markers, the one producing the most inliers is selected as an identified marker.
+Then the pose estimation step can be run on the whole set of detected quads and the quads of the selected marker, to further refine the calculated pose.
+Of course, this method is not suitable for large scale applications, it is only provided as a suggestion for a prototype marker recognition algorithm.
