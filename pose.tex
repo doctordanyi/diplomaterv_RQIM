@@ -9,12 +9,22 @@ First, it's mathematical formulation will be presented.
 Later some solutions to the problem will be summarised and compared.
 Based on this comparison, an algorithm will be selected for use in this project.
 
-The pose estimation problem can be viewed as part of determining the camera parameters.
-
+Taking photos with a camera can be thought of as mapping 3D points from scene being observed to the image plane of the camera.
+This mapping depends on a number of parameters, some of witch is tied to the camera, others depend on the viewpoint and angle.
+Based on these parameters, a \textit{perspective projection model} can be constructed.
+Mathematically, the model can described by a $P$ projection matrix.
+It is a $3*4$ matrix, which gives the image point\footnote{Determined up to a scale factor} for any given world point in homogeneous coordinates.
 \begin{equation}
 	P = K [R|T]
+	\label{eq:projMatrix}
 \end{equation}
+The $P$ matrix can be constructed as shown in \eqref{projMatrix}.
 
+$K$ is a $3*3$ matrix describing the \textit{intrinsic camera parameters} or \textit{camera model}.
+These parameters depend only the internals of the camera, thus are independent from the orientation or position.
+Once these are measured for a camera, they can be reused later.
+Some models use more variables to describe the internal workings of the camera, others are more simple.
+The model used in this work is summarized by the camera matrix described in \eqref{intrinsicParams}.
 \begin{equation}
 	K =
 	\begin{bmatrix}
@@ -22,8 +32,15 @@ The pose estimation problem can be viewed as part of determining the camera para
 		0   & f_y    & v_0 \\
 		0   & 0      & 1
 	\end{bmatrix}
+	\label{eq:intrinsicParams}
 \end{equation}
+The notation of the model is the following: $f_x$ and $f_y$ denote the focal lengths of the camera on the $x$ and $y$ axis, while $(u_0,v_0)$ is the principal point.
+The principal point is the image point where the optical axis intersects with the image plane.
+The parameter $\gamma$ is the skew of the camera, which will be neglected in this work, $\gamma = 0$ will be used.
 
+The other part of the projection matrix, $[R | T]$, describe the position and orientation of the camera in the world coordinate system.
+These are called \textit{extrinsic parameters}, and depend on the current configuration (position) of the camera.
+The matrix is constructed as shown in \eqref{extParams}.
 \begin{equation}
 	[R | T] =
 	\begin{bmatrix}
@@ -31,8 +48,12 @@ The pose estimation problem can be viewed as part of determining the camera para
 		r_{21} & r_{22} & r_{23} & t_2\\
 		r_{31} & r_{32} & r_{33} & t_3\\
 	\end{bmatrix}
+	\label{eq:extParams}
 \end{equation}
+It is made up of two separate parts: $R$ describes the orientation, while $T$ the translation with respect to the origin of the world coordinate system.
+These parameters are only valid while the camera remains stationary.
 
+The pose estimation problem can be viewed as part of determining the camera parameters.
 %-----------------------------------------------------------------------------------------------
 \section{Pose Estimation Algorithms}
 %-----------------------------------------------------------------------------------------------
