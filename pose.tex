@@ -64,9 +64,76 @@ In the next section some solutions to the PnP problem will be presented.
 \section{Pose Estimation Algorithms}
 %-----------------------------------------------------------------------------------------------
 
+There have been many solutions to the perspective-n-point problem.
+These varied in performance, accuracy and principle.
+Some only gave solutions to the case of $n=3$, which is the simplest solution computationally, but is also very error prone. 
+Others solved the problem for any number of point pairs, but required that the points are not coplanar.
+Still another class of algorithms worked on coplanar points.
+
+% TODO: introduction finalise
+
 %-----------------------------------------------------------------------------------------------
 \subsection{EPnP}
 %-----------------------------------------------------------------------------------------------
+
+An efficient, non-iterative solution to the problem was described in \cite{Lepetit2008}.
+The algorithm has a complexity of $O(n)$ for $n\geq4$, which is substantially more efficient than it's rivals.
+The EP$n$P algorithm is more accurate than most non-iterative solutions, and it's also much faster than the iterative algorithms.
+
+EP$n$P solves the pose estimation problem for $n\geq3$ point correspondences.
+The core concept of the solution is that each $n$ \textit{reference point}\footnote{Points in the world frame} can be expressed as a weighted sum of 4 \textit{virtual control points}\cite{Lepetit2008} (actually, for the planar reference points, 3 virtual control point are enough).
+This way the coordinates of these control points become the unknown variables of the problem.
+The camera pose is later calculated from the control points.
+
+A short summary of the process will be presented here, using the notation of the original paper\cite{Lepetit2008}.
+First, the $n$ reference points in world coordinates ($p_i^w$) and their corresponding image reference points ($p_i^c$) are expressed as linear combinations of the virtual control points ($c_j^w, c_j^c$).
+\begin{align}
+	p_i^w = \sum_{j=1}^{4} \alpha_{ij} c_j^w \\ 
+	p_i^c = \sum_{j=1}^{4} \alpha_{ij} c_j^c \\
+	\sum_{j=1}^{4} \alpha_{ij} = 1
+\end{align}
+Note that the weights are normalised per reference point.
+Also, all points are represented with homogeneous coordinates.
+
+EP$n$P only calculates the extrinsic parameters of the projection.
+It requires the intrinsic camera matrix to work, which will be noted with $K$.
+With this in mind, the relationship between the image reference points and the world reference points can be written as
+\begin{equation}
+	s_i p_i^c = K \sum_{j=1}^{4} \alpha_{ij} c_j^c,
+	\label{eq:controlPointProj}
+\end{equation}
+where $s_i$ is a scalar projective parameter.
+
+The homogeneous coordinates of the image control points will be noted as follows.
+\begin{equation}
+	c_j^c = 
+	\begin{bmatrix}
+		x_j^c & y_j^c & z_j^c
+	\end{bmatrix}^T
+\end{equation}
+With this notation, \eqref{controlPointProj} can be rearranged into the following form for each reference point.
+\begin{align}
+	\sum_{j=1}^{4} \alpha_{ij} f_x x_j^c + \alpha_{ij} (u_0 - u_i) \\
+	\sum_{j=1}^{4} \alpha_{ij} f_y y_j^c + \alpha_{ij} (v_0 - v_i) 
+\end{align}
+
+Using the above two equations for each reference point, a homogeneous linear equation system $Mx = 0$ can be formed for the control points.
+The $x$ vector is defined by
+\begin{equation}
+x = 
+	\begin{bmatrix}
+		{c_1^c}^T & {c_2^c}^T & {c_3^c}^T & {c_4^c}^T
+	\end{bmatrix}^T,
+\end{equation}
+and the solution for control points will lie in the kernel of $M$.
+Solving the system with the SVD method, the solution is expressed as:
+\begin{equation}
+	x = \sum_{i=1}^{N} \beta_i v_i
+\end{equation}
+Where $N$ is the number of the singular values of $M$ and $v_i$ is corresponding singular vector.
+
+Using the solution obtained for the control points, the P3P problem is solved for the pose.
+It is proven in \cite{Lepetit2008} that the $R$ and $T$ matrices minimise the reprojection error between the world reference points and their corresponding image reference points.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{An Iterative Solution}
