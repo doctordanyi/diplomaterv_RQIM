@@ -220,6 +220,39 @@ The algorithm is globally convergent, so any rotation can be chosen to initialis
 \subsection{Robust Pose Estimation from a Planar Target}
 %-----------------------------------------------------------------------------------------------
 
+The \textit{Robust Pose Estimation for Planar Targets} algorithm was published in \cite{robust}.
+It is an iterative method for calculating the camera pose that addresses some problems of the already existing solutions.
+Namely, all previous iterative algorithm suffer from \textit{pose ambiguities}\cite{robust}.
+These can cause jumps in the measured camera pose in consecutive images, which are not tolerable in some applications.
+Also, this solution is optimised for planar targets.
+This property makes it a good candidate for this project.
+This method is based on the iterative approach described above, the same notations will be used here also.
+
+It is shown in \cite{robust} that multiple local minima of the error function\footnote{The same, object space error function is used as in the above described iterative method} can exist even in the noise-free scenario.
+The existence of such local minima depends on all parameters of the error function.
+In the noise-free case, the global minimum of the error 0 for the real camera pose.
+If the measurements are burdened with noise, the error function is always greater than zero, but the real solution should have the lowest level of error out the multiple possible minima.
+This algorithm provides a way to select the correct solution from the possibilities, eliminating pose jumps.
+
+The algorithm is based on two major observations\cite{robust}:
+\begin{itemize}
+	\item Sometimes there are two distinct local minima, depending on the actual configuration ($R, t, p_i, v_i$)
+	\item The correct solution should have the lower error magnitude.
+\end{itemize}
+
+The algorithm proposed by the \cite{robust} will be shown below.
+\begin{enumerate}
+	\item Estimate a first pose $\hat{P}_1 = (\hat{R}_1, \hat{t}_1)$ by applying any existing iterative pose estimation algorithm. $\hat{P}_1$ is one local minimum of the error function. The goal of this algorithm is to analytically derive an estimate of the second local minimum, if such a minimum exists.
+	\item Transform the coordinate system to get $\tilde{P}_1 = (\tilde{R}_1, \tilde{t}_1)$.
+	\item Estimate $\tilde{R}_z$ to obtain the transformed system and the parameters of the first pose ($\tilde{\gamma}_1$ and $\tilde{\beta}_1$).
+	\item Fix $\gamma = \tilde{\gamma}_1$, and estimate all local minima of the error function for the parameters $\beta$ and $\tilde{t}$.
+	\item Undo the transformations of step 1 and step 2 for all local minima to obtain poses $\hat{P}_i$.
+	\item Use all poses $\hat{P}_i$ as a start value for the iterative pose estimation algorithm to get final poses $P_i^*$
+	\item Decide the final and correct pose, which has the lowest error magnitude.
+\end{enumerate}
+
+For detailed description of all transformations and processing steps, see \cite{robust}.
+
 %-----------------------------------------------------------------------------------------------
 \section{Comparison}
 %-----------------------------------------------------------------------------------------------
