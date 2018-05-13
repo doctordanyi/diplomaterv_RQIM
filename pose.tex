@@ -132,12 +132,89 @@ Solving the system with the SVD method, the solution is expressed as:
 \end{equation}
 Where $N$ is the number of the singular values of $M$ and $v_i$ is corresponding singular vector.
 
-Using the solution obtained for the control points, the P3P problem is solved for the pose.
-It is proven in \cite{Lepetit2008} that the $R$ and $T$ matrices minimise the reprojection error between the world reference points and their corresponding image reference points.
+Using the solution obtained for the control points, the pose can be calculated, as for 3 or 4 points an exact solution exists to the problem.
+It is shown in \cite{Lepetit2008} that the $R$ and $T$ matrices minimise the reprojection error between the world reference points and their corresponding image reference points.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{An Iterative Solution}
 %-----------------------------------------------------------------------------------------------
+
+A commonly used iterative solution was given to the pose estimation problem in \cite{iterative}.
+The proposed algorithm is globally convergent, has reasonable runtime (it usually converges in 5-10 iterations) and provides accurate results.
+Opposed to the previous iterative algorithms, the method proposed in \cite{iterative} is based on minimizing an object-space collinearity error.
+The algorithm successively improves an estimate of the rotation part of the pose, and then calculates an associated translation.
+
+The iterative algorithm is based on solving the \textit{absolute orientation problem}.
+Using the notation defined in \cite{iterative}, the problem can be formulated as follows.
+Let $q_i$ be a reference point expressed in \textbf{camera-space coordinates}, while $p_i$ is the same point in \textbf{world coordinates}.
+Then for each observed point \eqref{iterAbsOrient1} is true.
+\begin{equation}
+	q_i = R p_i + t
+	\label{eq:iterAbsOrient1}
+\end{equation}
+Using 3 or more reference points, $R$ and $t$ (the rotation and translation between world- and camera coordinates) can be calculated by solving the following least-squares problem\cite{iterative}, where the solution is subject to the $R^TR = I$ constraint.
+\begin{align}
+	\min_{R,t} \sum_{i=1}^{n} ||R p_i + t - q_i ||^2
+	\label{eq:iterLSProb}
+\end{align}
+The constrained LS problem can solved by singular value decomposition.
+The process of the SVD solution is the following.
+
+Let the centroids of the $p$ and $q$ points respectively be:
+\begin{equation}
+	\bar{p} = \frac{1}{n} \sum_{i=1}^{n} p_i,
+	\bar{q} = \frac{1}{n} \sum_{i=1}^{n} q_i
+\end{equation}
+The sample cross-covariance matrix then can be expressed as:
+\begin{equation}
+	M = \sum_{i=1}^{n} (q_i - \bar{q})(p_i - \bar{p})^T
+\end{equation}
+It is shown in \cite{iterative} that if $R^*$ and $t^*$ minimize \eqref{iterLSProb}, they also satisfy the following equations.
+\begin{align}
+	R^* = \arg \max_R tr(R^TM)
+	t^* = \bar{q} - R^*\bar{p}
+\end{align}
+
+Let $(U,\Sigma, V)$ be a SVD of $M$, that is $U^TMV=\Sigma$. Then the solution to \eqref{iterLSProb} is\cite{iterative}
+\begin{equation}
+	R^* = VU^T
+	\label{eq:iterOrientSolution}
+\end{equation}
+
+The iterative part of the algorithm is heavily dependant on the above absolute orientation solution.
+The algorithm is based on minimising the object-space collinearity error.
+The error vector is defined in \eqref{iterErrFunc}, where $F_i$ is a projection operator defined as
+\begin{equation}
+	F_i = \frac{v_iv_i^T}{v_i^Tv_i}
+\end{equation}
+for each $v_i$ image point.
+\begin{equation}
+	e_i = (I - F_i)(Rp_i + t)
+	\label{eq:iterErrFunc}
+\end{equation}
+Then, the magnitude of the error vector is minimized by the iterative algorithm.
+\begin{equation}
+	E(R,t) = \sum_{i=1}^{n} ||e_i||^2 = \sum_{i=1}^{n} ||(I - F_i)(Rp_i + t)||^2 
+	\label{eq:iterErrFuncMagn}
+\end{equation}
+The above formula is quadratic in $t$, so the translation can be calculated in closed form given any fixed $R$ rotation.
+Since the optimal translation can be expressed as a function of $R$, \eqref{iterErrFuncMagn} can be rewritten in a form closely resembling the absolute orientation problem.
+The camera space reference points also can be expressed as a function of $R$.
+The reformulated error function is the following.
+\begin{equation}
+	E(R) = \sum_{i=1}^{n} || Rp_i + t(R) - q_i(R) ||^2
+\end{equation}
+The above formula, unlike \eqref{iterLSProb}, can not be solved for $R$ in closed form, as the sample cross-covariance matrix also depends on $R$ itself.
+However, $R$ can be calculated iteratively.
+If the $k$th estimate of the orientation is known (noted with $R^{(k)}$), the next estimate, $R^{(k+1)}$ can be calculated by solving the following absolute orientation problem.
+\begin{align}
+	R^{(k+1)} &= \arg \min_R \sum_{i=1}^{n} || Rp_i + t^{(k)} - F_iq_i^{(k)} ||^2 \\
+			  &= \arg \max_R tr(R^TM(R^{(k)})) 
+\end{align}
+In each iteration, the translation is also calculated, as it only depends on the orientation estimate.
+
+Solving the above formula iteratively will converge on the correct camera pose\cite{iterative}.
+The algorithm is globally convergent, so any rotation can be chosen to initialise the process.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{Robust Pose Estimation from a Planar Target}
