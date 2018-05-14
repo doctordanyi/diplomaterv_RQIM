@@ -263,3 +263,37 @@ For detailed description of all transformations and processing steps, see \cite{
 \section{Comparison}
 %-----------------------------------------------------------------------------------------------
 
+The algorithms considered for use (\textit{EPnP}, \textit{the iterative approach} and \textit{the robust pose estimation}) each have desirable properties.
+Each excel in different aspects, but their comparative advantages also have their price.
+Considering the probable use-cases of this project, the following properties of an algorithm are important.
+First of all, the pose estimation has to be \textit{robust}.
+Jumps in the detected pose are undesirable.
+The computational efficiency of the solution is also important, as in the later stages of this project use in embedded systems or mobile devices is planned.
+Naturally, the accuracy of the algorithm is also considered.
+The more accurate the pose measured by the better, however robustness and performance can not be sacrificed for it.
+
+When computational efficiency is concerned, EP$n$P is the clear winner.
+It's complexity is linear in the number of corresponding point pairs: it is $O(n)$ for $n\geq4$.
+Usually, iterative methods are quite costly: they range from $O(n^2)$ to $O(n^2)$.
+The iterative algorithm described in \cite{iterative} is actually quite efficient, usually converging quickly.
+In optimal cases, it is comparable to the performance of EP$n$P, but if it is not initialised correctly it can get stuck in an incorrect local minimum.
+Performance-wise the robust pose estimation algorithm is the most expensive.
+It is based on an iterative approach, and the further operations are done to provide robustness.
+However, it also is quite usable, as the implementation tried and used in this project is based on \cite{iterative}.
+
+Finding a robust enough algorithm for this project is challenging.
+In this paper the use of planar markers is discussed.
+Planar reference points are a critical configuration for the perspective-n-point problem.
+It is shown in \cite{robust} that the probability choosing the correct pose using iterative algorithms can be as low as $60\%$.
+The iterative approach described here may result in pose jumps in $40\%$ of the cases using a planar target.
+This statistic is significantly improved by the robust pose estimation algorithm.
+
+Finally, the accuracy of the solutions have to be assessed.
+The robust and the iterative methods provide the same level of precision, as they are basically the same.
+Their error remains below $5\%$ even for noisy images.
+Compared to that, the EP$n$P method performs worse, reaching up to $10\%$ rotation error.
+However, it can be improved if necessary by applying Gauss-Newton optimisation for the detected pose, or using the detected pose as initialisation for the iterative algorithm.
+
+Based on the above observations, both EP$n$P and the robust pose estimation algorithm can be recommended for use.
+For the development phase, the robust solution will be used.
+However, depending on the available resources in mobile platforms and embedded systems, EP$n$P can provide a good alternative.
