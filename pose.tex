@@ -67,10 +67,16 @@ In the next section some solutions to the PnP problem will be presented.
 There have been many solutions to the perspective-n-point problem.
 These varied in performance, accuracy and principle.
 Some only gave solutions to the case of $n=3$, which is the simplest solution computationally, but is also very error prone. 
-Others solved the problem for any number of point pairs, but required that the points are not coplanar.
+Others solved the problem for any number of point correspondences, but required that the points are not coplanar.
 Still another class of algorithms worked on coplanar points.
 
-% TODO: introduction finalise
+As part of this project, multiple solutions were examined.
+The goal os to select and algorithm that suits the needs of this project: The ideal algorithm has to be robust, reasonably accurate, and lightweight enough to be run on mobile devices.
+As a general rule, iterative algorithms provide better accuracy, but they are also more computationally expensive.
+The other end of the spectrum, the non-iterative solutions are usually less accurate, but are "cheaper" to use.
+
+In the following sections will be short summaries of the algorithms considered for use in this project.
+They will be compared and the most suitable will be selected.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{EPnP}
