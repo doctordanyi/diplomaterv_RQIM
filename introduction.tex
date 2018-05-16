@@ -4,7 +4,7 @@
 
 Computer vision, and image processing in general, is a computationally intensive area.
 In the past the use of these algorithms was severely limited by the lack of processing power.
-Image processing solutions were mostly used for scientific purposes, and the algorithms ran offline: real-time applications were not possible.
+Image processing solutions were mostly used for scientific purposes, and the algorithms ran off-line: real-time applications were not possible.
 Satellite photos were analysed, medical imaging solutions were developed at the time.
 Optical character recognition was also a popular topic for image processing research.
 A famous scientific example from that time gave the basis for the Hough transformation, which will also be discussed in this work.
@@ -15,9 +15,54 @@ Around the 1970s cheaper computers and dedicated hardware solutions started spre
 This made it possible to create real time image processing applications for some use-cases.
 One such use-case was television standards conversion.
 
-As general purpose computers became faster and cheaper, they replaced the specialised circuits in almost all areas of application.
-Nowadays image processing solution to common problems (localisation, mapping, measurement, etc...) is chosen as a solution because it became the cheapest and most versatile alternative.
+As general purpose computers became faster and cheaper, they replaced the specialized circuits in almost all areas of application.
+Nowadays image processing solution to common problems (localization, mapping, measurement, etc...) is chosen as a solution because it became the cheapest and most versatile alternative.
 Furthermore, 3D computer vision applications became not only possible, but widespread.
 3D scanners, range finders, virtual- and augmented reality solutions have spread from laboratories and research institutions to consumer electronics.
 Processing power is no longer a bottleneck for most computer vision applications.
 
+In this paper a common 3D computer vision problem will be discussed: camera pose estimation.
+The result of pose estimation is the location and orientation of the camera in a previously defined world coordinate system.
+This information is then used in many areas of application.
+The nowadays popular vision-based navigation and mapping (SLAM) solutions are heavily based on knowing the spacial coordinates of the observer.
+Another application where the pose estimation problem has to be solved is augmented reality (AR).
+In AR an accurate and stable pose estimation solution is a must, otherwise the projected virtual objects would not fit in the observed scene.
+
+From a technical aspect, the problem can be solved in various ways.
+As a solution, markers with known structures can be placed in the scene, and the camera pose can be calculated based on the observed properties of those markers.
+The markers can be planar or 3-dimensional.
+Another class of pose estimation systems use the already present structure of the observed scene.
+Those work by tracking recognisable features through time or multiple cameras.
+This project focuses on using fiducial, planar markers for solving the pose estimation problem.
+
+The goal of this project is to develop a marker based pose estimation solution.
+To achieve this goal, already existing algorithm for estimating the camera pose.
+Only algorithms based on corresponding point pairs were examined.
+Defining a suitable marker is also within the scope of the project.
+A method for using those markers for pose estimation is also developed.
+The accuracy and robustness of the developed solution is also a target.
+
+This paper covers the above mentioned goals with the following structure.
+The first chapter is dedicated to the pose estimation problem.
+A formal definition if the problem will be presented.
+Later on, existing solutions to the pose estimation problem will be summarised.
+Finally, the algorithms will be compared, and the most suitable for the project will be selected.
+
+The second chapter covers the marker used in this project.
+The properties required from a suitable marker will be presented.
+Then a marker meeting those criteria will be proposed, along with is mathematical formulation and implementation details.
+An algorithm for generating randomised markers will also be presented. 
+
+In chapter 3 various detection techniques will be discussed for the proposed markers.
+First, the theoretical foundations of the detection algorithms will be presented.
+This will cover several line detection methods and an algorithm for corner recognition.
+After the theory has been discussed, marker detection solutions will be built around them.
+These alternative solutions will then be benchmarked and compared.
+In the last part of the chapter the most suitable detector will be selected.
+
+Chapter four will be about building a pose estimating solution around the marker and the recognition algorithm so far defined.
+The preprocessing and noise filtering techniques used for preparing the input image for processing will be explained.
+The details of using the detected marker points for pose estimation will also be covered in this chapter.
+Lastly, a solution for identifying the marker detected by the process will be proposed.
+
+In the last chapter, a short summary of the findings in this work will be presented.
