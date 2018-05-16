@@ -4,7 +4,9 @@
 
 During the course of this work the process of calculating camera pose was thoroughly examined.
 Each step from getting the input image to calculating the camera pose was discussed.
-For most parts both the underlying theory and empirical test results were presented.
+Usually there were multiple possible solutions for every step of the problem.
+These were thoroughly compared, for most parts both the underlying theory and empirical test results were presented.
+Based on those, the optimal candidates for the current application were selected.
 
 In line with the project targets, multiple pose estimation methods were discussed and compared.
 The EP$n$P\cite{Lepetit2008}, an iterative approach\cite{iterative} and the robust pose estimation\cite{robust} were considered as candidates to be used in this project.
@@ -49,3 +51,40 @@ Images used as input for pose estimation have to be preprocessed and filtered fo
 These steps of the processing pipeline have been described in chapter 4.
 The detected quad structures of a marker are used as input for the pose estimation algorithms selected in chapter 1.
 A RANSAC-like approach was proposed for finding the correspondences between the detected and the original quads.
+When the correspondence is found, the pose is further refined using all available point pairs.
+
+As a side note, a method for identifying the detected marker was also proposed.
+It is based on the same principle as the detection itself, only extended to check quad pairing with multiple, already known possible markers.
+This is however only a first draft for marker identification, it has limitations that make practical application questionable.
+
+To sum up, in this paper a specialised marker for pose estimation was described.
+A solution for camera pose estimation based on those markers was developed.
+The solution uses the \textit{Robust Pose Estimation for Planar Targets} algorithm for calculating the pose from point correspondences when robustness is needed and there are ample resources.
+When the solution is running on a platform with more limitations, the \textit{EPnP} algorithm is recommended for use.
+The quad detection is based on line detection, using the \textit{LSD: A Line Segment Detector} algorithm.
+
+There are still many possible ways to improve the each part of this project, these could be addressed by further future research.
+Firstly, the markers themselves could be refined.
+The generation process could be more efficient, or more flexible.
+Experiments could be made with selecting the optimal ranges for the quad parameters to better cover the marker area.
+Although it was only lightly touched in this work, the field of discrete RQIM holds quite a lot of possibilities.
+More robust and efficient detection algorithm could be build around them.
+It would be also possible to code extra information to the discrete quad parameters.
+Another possibility for expanding the parameter space (or to encode meta information to help the detection process) is to add some kind of colour-coding to the marker.
+This could be used for example to simplify the finding of corresponding quads in the detected and original marker.
+
+The quad detection algorithm could also be improved.
+More detection principles could be examined.
+Just to name one, quad objects could directly be fit to the pixels of the preprocessed region.
+However, the detectors described in this work could also be improved in various ways.
+As a starting points, none of them were fully prepared for every possible edge-case.
+That is, there are situations (although not many), where a quad could probably be detected, but the implementation does not handle it.
+As it was stated in chapter 3, the detector based on the probabilistic Hough transform should be refined, as it comes close to the results achieved by LSD.
+
+The preprocessing steps are now limited to dealing with Gaussian White Noise.
+However, on real images more error classes are present.
+Further noise filtering could be implemented.
+
+Last, but not least, the functionality of the solution could be extended.
+For example, in this work it was supposed that the camera used is calibrated.
+In the future, camera calibration could also be made to be part of the solution.
