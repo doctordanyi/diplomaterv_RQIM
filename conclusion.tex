@@ -2,3 +2,50 @@
 \chapter{Conclusion}\label{sect:conclusion}
 %-----------------------------------------------------------------------------------------------
 
+During the course of this work the process of calculating camera pose was thoroughly examined.
+Each step from getting the input image to calculating the camera pose was discussed.
+For most parts both the underlying theory and empirical test results were presented.
+
+In line with the project targets, multiple pose estimation methods were discussed and compared.
+The EP$n$P\cite{Lepetit2008}, an iterative approach\cite{iterative} and the robust pose estimation\cite{robust} were considered as candidates to be used in this project.
+Short summaries of their operating principles were presented.
+Their performance then was compared with respect to multiple properties: accuracy, robustness, and computational efficiency.
+As a result, two algorithms were selected depending on the available computational power available on the target platform.
+EP$n$P is recommended for use on mobile devices or embedded platforms, where efficient, non-iterative solution is preferred.
+However, if robust and accurate results are necessary (and there are enough resources), the robust pose estimation algorithm is the better choice.
+
+Another focus of the project was developing a marker with advantageous properties for pose estimation.
+To achieve this goal the RQIM was proposed.
+It is a randomly generated marker put together from multiple quads.
+It has been shown to have desirable properties for pose estimation: scale invariance and redundancy.
+A formal representation of the quads (both mathematical and computational) have been defined.
+A simple algorithm was proposed for generating random markers.
+The notion of creating discrete parameter space for quads has also been examined.
+It would provide additional robustness and the ability to encode meta-information in the markers, however these possibilities have not been tested.
+
+The main part of this work is dedicated to the development and testing of a marker detecting solution.
+It was shown that marker detection is (from an image processing point of view) equivalent to detecting individual quads on the source image.
+Two different approaches were made to quad detection: line detection-, and corner detection based solution.
+Multiple line detection algorithms were considered for use.
+To make a more informed decision on which one to use, their theoretical foundations have been summarised.
+The theory of corner detection was also covered.
+Four different quad detectors were developed and tested: each based on a different underlying algorithm.
+Their implementation details were discussed and their python source code is published in the appendix.
+
+The quad detectors were not only compared based on the theoretical capabilities of their underlying algorithm, they were also extensively tested.
+A testing methodology have been developed for comparing the algorithms.
+The test were run on randomly generated quads with fixed sizes.
+For each size, a 1000 instance was generated to guarantee that the results are statistically significant.
+To quantify the detection error, multiple error functions were defined.
+The detectors were compared by the ones that describe the overall error in detection.
+Error functions were defined for each quad parameter; with their help, the distribution of inaccuracy between the parameters were examined.
+
+Based on the data obtained by the tests, the LSD\cite{LSDDet} line detector based implementation was selected.
+It proved to be the most accurate and resistant to noise.
+It is also an efficient algorithm that runs in linear time.
+
+The final part of this work was about organising the above components into a complete pose estimation solution.
+Images used as input for pose estimation have to be preprocessed and filtered for noise.
+These steps of the processing pipeline have been described in chapter 4.
+The detected quad structures of a marker are used as input for the pose estimation algorithms selected in chapter 1.
+A RANSAC-like approach was proposed for finding the correspondences between the detected and the original quads.
