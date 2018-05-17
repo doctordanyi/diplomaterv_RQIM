@@ -3,17 +3,17 @@
 %----------------------------------------------------------------------------
 \chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
 A képfeldolgozás nem újkeletű tudományterület, már évtizedek óta folynak kutatások ezen a téren.
-Sok, ma is használt algoritmust az 1960-as években fejlesztettek ki.
-Akkoriban főleg a tudósok körében használt, drága eszköznek számított a számítógépes képfeldolgozás.
+Sok, ma is használt algoritmust az 1960-as években kifejlesztettek.
+Akkoriban a számítógépes képfeldolgozás főleg a tudósok körében használt, drága eszköznek számított.
 Műholdképek, orvosdiagnosztikai adatok elemzésére, optikai karakterfelismerésre használták.
 Az olcsó és nagy teljesítményű, általános felhasználású számítógépek terjedésével azonban új lehetőségek nyíltak meg ezen a területen.
-Lehetővé vált például a valósidejű képfeldolgozó algoritmusok futtatása.
+Lehetővé vált például a képfeldolgozó algoritmusok valósidejű futtatása.
 Ezen fejlődés nélkül lehetetlen lett volna a 3 dimenziós látórendszerek kifejlesztése.
-Ezek a rendszerek jóval számításigényesebbek a klasszikus képfeldolgozási problémáknál, de a mai technológiával már ezek a megoldások és elérhetőek az átlagos felhasználók számára.
+Ezek a rendszerek jóval számításigényesebbek a klasszikus képfeldolgozási problémáknál, de a mai technológiával már ezek a megoldások is elérhetőek az átlagos felhasználók számára.
 
 Jelen munka a fiduciális markerek alapján történő nézőpont meghatározás alkalmazhatóságát vizsgálja.
 A nézőpont-meghatározás célja a kamera pozíciójának és orientációjának meghatározása egy ismert markerhez viszonyítva.
-Ez egy összetett feladat aminek a megoldása több képfeldolgozási- és optimalizációs feladat megoldását igényli.
+Ez egy összetett feladat aminek a megoldása több képfeldolgozási- és optimalizációs probléma megoldását igényli.
 Ez a dolgozat be fogja mutatni a kép alapján történő nézőpont-meghatározás lépéseit.
 
 A munka első részében ismertetésre kerül a nézőpont-meghatározási probléma.
@@ -23,8 +23,8 @@ Ennek a szakasznak a zárásaként összehasonlítom az eljárásokat és kivál
 
 A pozicionálás pontosságát és robusztusságát nagyban befolyásolhatja az alkalmazott fiduciális marker is.
 Vannak ugyan már elterjedt markertípusok (ARTag, glyph, stb...), de jelen munkában kísérletet teszek egy új marker tervezésére.
-Ez az új marker megpróbál jobb eredményt nyújtani bizonyos területek, mint a már elterjedt megoldások.
-Ezen marker alkalmazhatósága is vizsgálva lesz ebben a dolgozatban.
+Ez az új marker megpróbál jobb eredményt nyújtani bizonyos területeken, mint a már elterjedt megoldások.
+Ezen marker alkalmazhatósága is vizsgálva lesz a dolgozatban.
 
 A dolgozat utolsó nagyobb része a markerek felismerésére használt képfeldolgozási eljárásokról fog szólni.
 A különböző algoritmusok rövid elméleti áttekintése után egy-egy implementációs javaslat is közlésre kerül.
@@ -39,7 +39,7 @@ A mérési eredmények alapján javasolni fogok egy, a projekt számára optimá
 Image processing has been an intensively researched subject for decades.
 Many algorithms that are used today have been developed in the 1960s.
 At that time, it was a costly tool mainly used by scientists for satellite imagery, medical imaging, optical character recognition, etc...
-The advancement of cheap and powerful general purpose computers opened up new possibilities for research and application.
+The advancement of cheap and powerful general purpose computers opened up new possibilities for research and applications.
 Real time image processing became possible.
 An interesting and even more computationally expensive sub-field of computer vision is 3D reconstruction.
 With today's (consumer) technology it is possible to map the 3D world based on image processing solutions.
@@ -48,10 +48,10 @@ Navigational, Augmented and Virtual Reality applications are spreading.
 This paper will examine the use of fiducial markers for camera pose estimation using a single camera.
 The goal of pose estimation is to determine the position and orientation of the camera with respect to a known marker.
 This is a complex task, which involves multiple image processing steps, as well as solving optimization problems.
-This work will provide an overview of the steps necessary for estimating the camera pose based on picture of a fiducial marker.
+This work will provide an overview of the steps necessary for estimating the camera pose based on pictures of a fiducial marker.
 
 A section of this work will be dedicated to the pose estimation problem.
-There will be a short summary of the problem of reconstructing the view point based on point pairs in the world coordinate system and image points.
+There will be a short summary of the problem of reconstructing the view point based on correspondence between points in the world coordinate system and image points.
 Then some algorithms will be summarised that solved that problem.
 This section will be closed by comparing the benefits and drawbacks of these algorithms and choosing the one that best suits the need of this project.
 

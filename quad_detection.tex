@@ -8,8 +8,6 @@ As a common preprocessing step for all quad detection methods segmentation is pe
 This step of the \textit{marker recognition process} takes the segmented input image and initialises quad structures based on the observed picture.
 The quad structures are then passed to the next processing step: the pose estimation logic.
 
-The process here diverges depending on which quad detection algorithm is used.
-They all need differently conditioned input images for optimal performance.
 From a computer vision point of view the task is to detect joint line segments.
 This is a well researched task in image processing, there are many well tried algorithms for it.
 For example, the problem can be solved by detecting lines and finding their intersection, or detecting corners and figuring out how they are connected, etc...
@@ -224,9 +222,9 @@ In sample images consisting of randomly positioned equal length lines, the PPHT 
 This effect is due to the fact that PPHT clears out the votes of the detected lines as soon as they are found.
 This reduces the clutter in the accumulator, resulting in more accurate results, while also being more computationally efficient.
 
-It also worth noting that the PPHT could, in theory, use every enhancement that were developed for the SHT.
+It also worth noting that the PPHT could, in theory, use every enhancement developed for the SHT.
 For example, the image gradient of the line segments could be used to reduce the number of pixels selected for voting.
-However, this aspect was not researched in the boundaries of this project.
+However, this aspect was not researched within the boundaries of this project.
 
 %-----------------------------------------------------------------------------------------------
 \subsection{Line Segment Detector}
@@ -234,7 +232,7 @@ However, this aspect was not researched in the boundaries of this project.
 
 A fundamentally different approach to line detection was described in \cite{LSDDet}.
 The algorithm is named \textbf{LSD} - for Line Segment Detector - by it's creators.
-It is which, unlike the SHT, detects line segments with subpixel accuracy by default.
+It, unlike the SHT, detects line segments with subpixel accuracy by default.
 The runtime of the process is linear in the pixel count of the processed image.
 It also has fairly good noise suppression.
 Another attractive property of the algorithm is that it doesn't have any parameters that require tuning by the user.
@@ -246,7 +244,7 @@ In this section will be a short summary of the theory behind this algorithm.
 The LSD takes as input a grayscale image and provides a list of line segments as output.
 The line detection is based on the image gradient.
 As a first step, a gradient field is generated from the input image.
-The gradient is taken using a $2x2$ window, see \eqref{lsdGrad}.
+The gradient is taken using a $2*2$ window, see \eqref{lsdGrad}.
 \begin{equation}
 	\begin{split}
 		g_x = \frac{i(x+1, y) + i(x+1, y+1) - i(x,y) - i(x, y+1)}{2}, \\

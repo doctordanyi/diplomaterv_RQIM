@@ -4,13 +4,13 @@
 
 The goal of this project is to calculate camera pose using a fiducial marker.
 To achieve this, a wide range of problems have to be solved including but not limited to marker design, detection, pose calculation.
-This chapter will focus on 3D pose estimation problem.
+This chapter will focus on the 3D pose estimation problem.
 First, it's mathematical formulation will be presented.
 Later some solutions to the problem will be summarised and compared.
 Based on this comparison, an algorithm will be selected for use in this project.
 
-Taking photos with a camera can be thought of as mapping 3D points from scene being observed to the image plane of the camera.
-This mapping depends on a number of parameters, some of witch is tied to the camera, others depend on the viewpoint and angle.
+Taking photos with a camera can be thought of as mapping 3D points from the scene being observed to the image plane of the camera.
+This mapping depends on a number of parameters, some of which are tied to the camera, others depend on the viewpoint and angle.
 Based on these parameters, a \textit{perspective projection model} can be constructed.
 Mathematically, the model can described by a $P$ projection matrix.
 It is a $3*4$ matrix, which gives the image point\footnote{Determined up to a scale factor} for any given world point in homogeneous coordinates.
@@ -56,7 +56,7 @@ These parameters are only valid while the camera remains stationary.
 The calculation of matrix $[R|T]$ is the process of \textit{camera pose estimation}, which is also known as the \textit{perspective-n-point problem}.
 The pose of a calibrated camera can be estimated using $n$ 3D points in the world frame and their corresponding $n$ points in the image plane.
 The camera pose has 6 DOF: the rotation (roll, pitch, and yaw) and the translation.
-In \eqref{extParams}, the $R$ is the rotation matrix, and $T$ is the translation vector.
+In \eqref{extParams}, $R$ is the rotation matrix, and $T$ is the translation vector.
 
 In the next section some solutions to the PnP problem will be presented.
 
@@ -71,9 +71,9 @@ Others solved the problem for any number of point correspondences, but required 
 Still another class of algorithms worked on coplanar points.
 
 As part of this project, multiple solutions were examined.
-The goal os to select and algorithm that suits the needs of this project: The ideal algorithm has to be robust, reasonably accurate, and lightweight enough to be run on mobile devices.
+The goal is to select and algorithm that suits the needs of this project: the ideal algorithm has to be robust, reasonably accurate, and lightweight enough to be run on mobile devices.
 As a general rule, iterative algorithms provide better accuracy, but they are also more computationally expensive.
-The other end of the spectrum, the non-iterative solutions are usually less accurate, but are "cheaper" to use.
+On the other end of the spectrum the non-iterative solutions are usually less accurate, but are "cheaper" to use.
 
 In the following sections will be short summaries of the algorithms considered for use in this project.
 They will be compared and the most suitable will be selected.
@@ -236,7 +236,7 @@ This method is based on the iterative approach described above, the same notatio
 
 It is shown in \cite{robust} that multiple local minima of the error function\footnote{The same, object space error function is used as in the above described iterative method} can exist even in the noise-free scenario.
 The existence of such local minima depends on all parameters of the error function.
-In the noise-free case, the global minimum of the error 0 for the real camera pose.
+In the noise-free case, the global minimum of the error is 0 for the real camera pose.
 If the measurements are burdened with noise, the error function is always greater than zero, but the real solution should have the lowest level of error out the multiple possible minima.
 This algorithm provides a way to select the correct solution from the possibilities, eliminating pose jumps.
 
@@ -246,7 +246,7 @@ The algorithm is based on two major observations\cite{robust}:
 	\item The correct solution should have the lower error magnitude.
 \end{itemize}
 
-The algorithm proposed by the \cite{robust} will be shown below.
+The algorithm proposed by \cite{robust} will be shown below.
 \begin{enumerate}
 	\item Estimate a first pose $\hat{P}_1 = (\hat{R}_1, \hat{t}_1)$ by applying any existing iterative pose estimation algorithm. $\hat{P}_1$ is one local minimum of the error function. The goal of this algorithm is to analytically derive an estimate of the second local minimum, if such a minimum exists.
 	\item Transform the coordinate system to get $\tilde{P}_1 = (\tilde{R}_1, \tilde{t}_1)$.
@@ -270,15 +270,15 @@ First of all, the pose estimation has to be \textit{robust}.
 Jumps in the detected pose are undesirable.
 The computational efficiency of the solution is also important, as in the later stages of this project use in embedded systems or mobile devices is planned.
 Naturally, the accuracy of the algorithm is also considered.
-The more accurate the pose measured by the better, however robustness and performance can not be sacrificed for it.
+The more accurate the measured pose, the better, however robustness and performance can not be sacrificed for it.
 
 When computational efficiency is concerned, EP$n$P is the clear winner.
 It's complexity is linear in the number of corresponding point pairs: it is $O(n)$ for $n\geq4$.
-Usually, iterative methods are quite costly: they range from $O(n^2)$ to $O(n^2)$.
+Usually, iterative methods are quite costly: they range from $O(n^2)$ to $O(n^8)$.
 The iterative algorithm described in \cite{iterative} is actually quite efficient, usually converging quickly.
 In optimal cases, it is comparable to the performance of EP$n$P, but if it is not initialised correctly it can get stuck in an incorrect local minimum.
 Performance-wise the robust pose estimation algorithm is the most expensive.
-It is based on an iterative approach, and the further operations are done to provide robustness.
+It is based on an iterative approach, and further operations are done to provide robustness.
 However, it also is quite usable, as the implementation tried and used in this project is based on \cite{iterative}.
 
 Finding a robust enough algorithm for this project is challenging.
